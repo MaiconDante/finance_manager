@@ -1,0 +1,64 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes virtuais
+venv/
+.venv/
+env/
+ENV/
+
+# Distribuição / empacotamento
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Arquivos de log
+*.log
+
+# Cobertura e testes
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# Type checkers
+.mypy_cache/
+.pyre/
+.pytype/
+
+# Lint
+.ruff_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDEs e editores
+.vscode/
+.idea/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Variáveis de ambiente
+.env
+.env.*
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos de banco de dados SQLite
+*.sqlite3
+*.db
+
+# Cache do Python
+.cache/
+
+# Arquivos de backup
+*.bak
+*.swp
+*~

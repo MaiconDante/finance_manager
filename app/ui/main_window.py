@@ -1,33 +1,68 @@
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel
-from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import (
+    QMainWindow, QWidget, QVBoxLayout, QLabel,
+    QPushButton, QHBoxLayout
+)
+
+from app.services import FinanceService
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Set window properties
         self.setWindowTitle("Finance Manager")
         self.setMinimumSize(900, 600)
-        #self.setWindowIcon(QIcon("./assets/images/app_icon.png"))
 
-        # Initialize UI components
+        # serviço central do sistema
+        self.finance = FinanceService()
+
         self._init_ui()
+        self._update_dashboard()
 
-    # Initialize the user interface
     def _init_ui(self):
-        # Create central widget and layout
-        central_widget = QWidget()
-        
-        # Create a vertical layout for the central widget
-        layout = QVBoxLayout()
+        self.central_widget = QWidget()
+        self.layout = QVBoxLayout()
 
-        # Add a title label to the layout
-        title = QLabel("📊 Finance Manager - Dashboard Inicial")
-        title.setStyleSheet("font-size: 20px; font-weight: bold;")
+        # Título
+        self.title = QLabel("📊 Dashboard Financeiro")
+        self.title.setStyleSheet("font-size: 20px; font-weight: bold;")
+        self.layout.addWidget(self.title)
 
-        # Add the title label to the layout
-        layout.addWidget(title)
+        # Labels do dashboard
+        self.label_income = QLabel()
+        self.label_expenses = QLabel()
+        self.label_balance = QLabel()
 
-        # Set the layout for the central widget and set it as the central widget of the main window
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
+        self.layout.addWidget(self.label_income)
+        self.layout.addWidget(self.label_expenses)
+        self.layout.addWidget(self.label_balance)
+
+        # Botões
+        buttons_layout = QHBoxLayout()
+
+        btn_income = QPushButton("Adicionar Renda")
+        btn_expense = QPushButton("Adicionar Despesa")
+
+        btn_income.clicked.connect(self._add_income)
+        btn_expense.clicked.connect(self._add_expense)
+
+        buttons_layout.addWidget(btn_income)
+        buttons_layout.addWidget(btn_expense)
+
+        self.layout.addLayout(buttons_layout)
+
+        self.central_widget.setLayout(self.layout)
+        self.setCentralWidget(self.central_widget)
+
+    def _update_dashboard(self):
+        self.label_income.setText(f"💰 Renda total: R$ {self.finance.total_income():.2f}")
+        self.label_expenses.setText(f"💸 Despesas total: R$ {self.finance.total_expenses():.2f}")
+        self.label_balance.setText(f"💵 Saldo: R$ {self.finance.balance():.2f}")
+
+    def _add_income(self):
+        # simples por enquanto (vamos melhorar depois com formulário)
+        self.finance.add_income(100)
+        self._update_dashboard()
+
+    def _add_expense(self):
+        self.finance.add_expense(50)
+        self._update_dashboard()

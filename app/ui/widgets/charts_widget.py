@@ -1,5 +1,12 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from PySide6.QtWidgets import (
+    QWidget,
+    QHBoxLayout
+)
+
+from matplotlib.backends.backend_qt5agg import (
+    FigureCanvasQTAgg as FigureCanvas
+)
+
 from matplotlib.figure import Figure
 
 class ChartsWidget(QWidget):
@@ -7,44 +14,90 @@ class ChartsWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
+        self._setup_ui()
 
-        self.figure = Figure()
-        self.canvas = FigureCanvas(self.figure)
+    def _setup_ui(self):
 
-        self.layout.addWidget(self.canvas)
+        layout = QHBoxLayout()
+        layout.setSpacing(25)
+        layout.setContentsMargins(10, 10, 10, 10)
 
-    def plot_expenses_by_category(self, transactions):
+        # gráfico pizza
+        self.pie_figure = Figure()
+        self.pie_canvas = FigureCanvas(
+            self.pie_figure
+        )
 
-        self.figure.clear()
-        ax = self.figure.add_subplot(111)
+        # gráfico barras
+        self.bar_figure = Figure()
+        self.bar_canvas = FigureCanvas(
+            self.bar_figure
+        )
+
+        self.pie_figure.tight_layout()
+        self.bar_figure.tight_layout()
+
+        layout.addWidget(self.pie_canvas)
+        layout.addWidget(self.bar_canvas)
+
+        self.setLayout(layout)
+
+    def plot_expenses_by_category(
+        self,
+        transactions
+    ):
+
+        self.pie_figure.clear()
+
+        ax = self.pie_figure.add_subplot(111)
 
         categories = {}
-        
-        for t in transactions:
-            if t.transaction_type == "Despesa":
-                categories[t.category] = categories.get(t.category, 0) + t.value
 
-        labels = list(categories.keys())
-        values = list(categories.values())
+        for transaction in transactions:
 
-        ax.pie(values, labels=labels, autopct="%1.1f%%")
+            if transaction.transaction_type == "Despesa":
 
-        ax.set_title("Despesas por Categoria")
+                categories[
+                    transaction.category
+                ] = (
+                    categories.get(
+                        transaction.category,
+                        0
+                    )
+                    + transaction.value
+                )
 
-        self.canvas.draw()
+        if categories:
 
-    def plot_income_vs_expenses(self, total_income, total_expenses):
+            ax.pie(
+                list(categories.values()),
+                labels=list(categories.keys()),
+                autopct="%1.1f%%"
+            )
 
-        self.figure.clear()
-        ax = self.figure.add_subplot(111)
+        ax.set_title(
+            "Despesas por Categoria"
+        )
 
-        labels = ["Renda", "Despesas"]
-        values = [total_income, total_expenses]
+        self.pie_canvas.draw()
 
-        ax.bar(labels, values)
+    def plot_income_vs_expenses(
+        self,
+        total_income,
+        total_expenses
+    ):
 
-        ax.set_title("Renda vs Despesas")
+        self.bar_figure.clear()
 
-        self.canvas.draw()
+        ax = self.bar_figure.add_subplot(111)
+
+        ax.bar(
+            ["Renda", "Despesas"],
+            [total_income, total_expenses]
+        )
+
+        ax.set_title(
+            "Renda vs Despesas"
+        )
+
+        self.bar_canvas.draw()

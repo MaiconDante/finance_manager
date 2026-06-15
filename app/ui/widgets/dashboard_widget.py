@@ -1,7 +1,9 @@
 from PySide6.QtWidgets import (
     QWidget,
+    QVBoxLayout,
     QHBoxLayout,
-    QTextEdit
+    QTextEdit,
+    QLabel
 )
 
 from app.ui.widgets.financial_card import FinancialCard
@@ -15,20 +17,34 @@ class DashboardWidget(QWidget):
 
     def _setup_ui(self):
 
-        layout = QHBoxLayout()
+        main_layout = QVBoxLayout()
+        main_layout.setSpacing(20)  # 👈 espaço entre blocos
+        main_layout.setContentsMargins(15, 15, 15, 15)
 
-        self.income_card = FinancialCard("💰 Renda")
-        self.expense_card = FinancialCard("💸 Despesas")
-        self.balance_card = FinancialCard("💵 Saldo")
+        # ===== CARDS =====
+        cards_layout = QHBoxLayout()
+        cards_layout.setSpacing(15)
+
+        self.balance_card = FinancialCard("💵 Saldo", "balance")
+        self.income_card = FinancialCard("💰 Renda", "income")
+        self.expense_card = FinancialCard("💸 Despesas", "expense")
+
+        cards_layout.addWidget(self.balance_card)
+        cards_layout.addWidget(self.income_card)
+        cards_layout.addWidget(self.expense_card)
+
+        # ===== INSIGHTS =====
+        self.insights_title = QLabel("📊 Insights Financeiros")
+
         self.insights_box = QTextEdit()
         self.insights_box.setReadOnly(True)
 
-        layout.addWidget(self.insights_box)
-        layout.addWidget(self.income_card)
-        layout.addWidget(self.expense_card)
-        layout.addWidget(self.balance_card)
+        # ===== ADD TO LAYOUT =====
+        main_layout.addLayout(cards_layout)
+        main_layout.addWidget(self.insights_title)
+        main_layout.addWidget(self.insights_box)
 
-        self.setLayout(layout)
+        self.setLayout(main_layout)
 
     def update_values(
         self,
@@ -53,17 +69,5 @@ class DashboardWidget(QWidget):
 
         self.insights_box.setText(
             "\n".join(insights)
-        )
-
-    def _update_dashboard(self):
-
-        self.dashboard.update_values(
-            self.finance.total_income(),
-            self.finance.total_expenses(),
-            self.finance.balance()
-        )
-
-        self.dashboard.update_insights(
-            self.finance.get_insights()
         )
         

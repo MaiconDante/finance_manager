@@ -1,10 +1,14 @@
 from app.models.transaction import Transaction
+from app.database import repository
 
 class FinanceService:
-    def __init__(self):
-        self.transactions = []
 
-    def add_transaction(self, transaction: Transaction):
+    def __init__(self):
+        repository.create_table()
+        self.transactions = repository.get_all_transactions()
+
+    def add_transaction(self, transaction):
+        repository.insert_transaction(transaction)
         self.transactions.append(transaction)
 
     def total_income(self):

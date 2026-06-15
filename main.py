@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication
-from app import MainWindow
+from app.ui.main_window import MainWindow
 
 def main():
     app = QApplication(["Finance Manager"])

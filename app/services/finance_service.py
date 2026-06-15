@@ -1,4 +1,5 @@
-from models.transaction import Transaction
+from app.models.transaction import Transaction
+
 class FinanceService:
     def __init__(self):
         self.transactions = []

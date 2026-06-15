@@ -3,7 +3,9 @@ from PySide6.QtWidgets import (
     QPushButton, QHBoxLayout
 )
 
-from app.services import FinanceService
+from app.services.finance_service import FinanceService
+from app.ui.transaction_dialog import TransactionDialog
+from app.models.transaction import Transaction
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -59,10 +61,43 @@ class MainWindow(QMainWindow):
         self.label_balance.setText(f"💵 Saldo: R$ {self.finance.balance():.2f}")
 
     def _add_income(self):
-        # simples por enquanto (vamos melhorar depois com formulário)
-        self.finance.add_income(100)
-        self._update_dashboard()
+
+        dialog = TransactionDialog("Renda")
+
+        if dialog.exec():
+
+            data = dialog.get_data()
+
+            transaction = Transaction(
+                date=data["date"],
+                description=data["description"],
+                value=data["value"],
+                category=data["category"],
+                transaction_type=data["transaction_type"],
+                payment_method=data["payment_method"]
+            )
+
+            self.finance.add_transaction(transaction)
+
+            self._update_dashboard()
 
     def _add_expense(self):
-        self.finance.add_expense(50)
-        self._update_dashboard()
+
+        dialog = TransactionDialog("Despesa")
+
+        if dialog.exec():
+
+            data = dialog.get_data()
+
+            transaction = Transaction(
+                date=data["date"],
+                description=data["description"],
+                value=data["value"],
+                category=data["category"],
+                transaction_type=data["transaction_type"],
+                payment_method=data["payment_method"]
+            )
+
+            self.finance.add_transaction(transaction)
+
+            self._update_dashboard()

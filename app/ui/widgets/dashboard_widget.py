@@ -1,8 +1,9 @@
 from PySide6.QtWidgets import (
     QWidget,
-    QVBoxLayout,
-    QLabel
+    QHBoxLayout,
 )
+
+from app.ui.widgets.financial_card import FinancialCard
 
 class DashboardWidget(QWidget):
 
@@ -13,15 +14,15 @@ class DashboardWidget(QWidget):
 
     def _setup_ui(self):
 
-        layout = QVBoxLayout()
+        layout = QHBoxLayout()
 
-        self.label_income = QLabel()
-        self.label_expenses = QLabel()
-        self.label_balance = QLabel()
+        self.income_card = FinancialCard("💰 Renda")
+        self.expense_card = FinancialCard("💸 Despesas")
+        self.balance_card = FinancialCard("💵 Saldo")
 
-        layout.addWidget(self.label_income)
-        layout.addWidget(self.label_expenses)
-        layout.addWidget(self.label_balance)
+        layout.addWidget(self.income_card)
+        layout.addWidget(self.expense_card)
+        layout.addWidget(self.balance_card)
 
         self.setLayout(layout)
 
@@ -31,14 +32,15 @@ class DashboardWidget(QWidget):
         total_expenses,
         balance
     ):
-        self.label_income.setText(
-            f"💰 Renda Total: R$ {total_income:.2f}"
+
+        self.income_card.update_value(
+            total_income
         )
 
-        self.label_expenses.setText(
-            f"💸 Despesas Totais: R$ {total_expenses:.2f}"
+        self.expense_card.update_value(
+            total_expenses
         )
 
-        self.label_balance.setText(
-            f"💵 Saldo Atual: R$ {balance:.2f}"
+        self.balance_card.update_value(
+            balance
         )

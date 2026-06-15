@@ -9,6 +9,7 @@ from app.ui.transaction_dialog import TransactionDialog
 from app.models.transaction import Transaction
 from app.ui.widgets.transactions_table import TransactionsTable
 from app.ui.widgets.dashboard_widget import DashboardWidget
+from app.ui.widgets.charts_widget import ChartsWidget
 
 # Janela principal da aplicação
 class MainWindow(QMainWindow):
@@ -34,6 +35,10 @@ class MainWindow(QMainWindow):
         self.title = QLabel("📊 Dashboard Financeiro")
         self.title.setStyleSheet("font-size: 20px; font-weight: bold;")
         self.layout.addWidget(self.title)
+
+        # Widget dos gráficos
+        self.charts = ChartsWidget()
+        self.layout.addWidget(self.charts)
 
         # Widget do dashboard
         self.dashboard = DashboardWidget()
@@ -94,6 +99,8 @@ class MainWindow(QMainWindow):
 
             self._update_table()
 
+            self._update_charts()
+
     # Adiciona uma nova transação de despesa
     def _add_expense(self):
 
@@ -118,8 +125,20 @@ class MainWindow(QMainWindow):
 
             self._update_table()
 
+            self._update_charts()
+
     def _update_table(self):
         self.table.load_transactions(
             self.finance.transactions
         )
         
+    def _update_charts(self):
+
+        self.charts.plot_expenses_by_category(
+            self.finance.transactions
+        )
+
+        self.charts.plot_income_vs_expenses(
+            self.finance.total_income(),
+            self.finance.total_expenses()
+        )

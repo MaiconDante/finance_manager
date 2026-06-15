@@ -67,7 +67,28 @@ class DashboardWidget(QWidget):
 
     def update_insights(self, insights):
 
-        self.insights_box.setText(
-            "\n".join(insights)
-        )
+        self.insights_box.clear()
+
+        for i in insights:
+
+            text = i["text"]
+            type_ = i["type"]
+
+            if "economizou" in text.lower() or "economizou" in text:
+
+                prefix = "💰 "
+
+            elif type_ == "success":
+                prefix = "🟢 "
+
+            elif type_ == "warning":
+                prefix = "🟡 "
+
+            elif type_ == "danger":
+                prefix = "🔴 "
+
+            else:
+                prefix = "ℹ️ "
+
+            self.insights_box.append(prefix + text)
         

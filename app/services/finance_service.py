@@ -1,6 +1,7 @@
 from app.models.transaction import Transaction
 from app.database import repository
 from app.services.insights_service import InsightsService
+from app.services.insights_engine import InsightsEngine
 
 class FinanceService:
 
@@ -8,6 +9,7 @@ class FinanceService:
         repository.create_table()
         self.transactions = repository.get_all_transactions()
         self.insights_service = InsightsService()
+        self.insights_engine = InsightsEngine()
 
     def add_transaction(self, transaction):
         repository.insert_transaction(transaction)
@@ -32,7 +34,7 @@ class FinanceService:
     
     def get_insights(self):
 
-        return self.insights_service.analyze(
+        return self.insights_engine.analyze(
             self.transactions,
             self.total_income(),
             self.total_expenses()

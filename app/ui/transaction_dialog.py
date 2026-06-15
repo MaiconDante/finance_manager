@@ -5,7 +5,8 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QComboBox,
     QPushButton,
-    QDateEdit
+    QDateEdit, 
+    QMessageBox
 )
 
 from PySide6.QtCore import QDate
@@ -67,7 +68,7 @@ class TransactionDialog(QDialog):
 
         self.setLayout(layout)
 
-        self.save_button.clicked.connect(self.accept)
+        self.save_button.clicked.connect(self._save)
 
     def get_data(self):
         return {
@@ -78,3 +79,51 @@ class TransactionDialog(QDialog):
             "payment_method": self.payment_combo.currentText(),
             "transaction_type": self.transaction_type
         }
+
+    def _validate_fields(self):
+
+        description = self.description_edit.text().strip()
+        value = self.value_edit.text().strip()
+
+        if not description:
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Informe uma descrição."
+            )
+            return False
+
+        if not value:
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Informe um valor."
+            )
+            return False
+
+        try:
+            float(value)
+        except ValueError:
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Informe um valor numérico válido."
+            )
+            return False
+        
+        value = float(value)
+
+        if value <= 0:
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "O valor deve ser maior que zero."
+            )
+            return False
+
+        return True
+    
+    def _save(self):
+
+        if self._validate_fields():
+            self.accept()

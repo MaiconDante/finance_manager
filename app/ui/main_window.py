@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
 from app.services.finance_service import FinanceService
 from app.ui.transaction_dialog import TransactionDialog
 from app.models.transaction import Transaction
+from app.ui.widgets.transactions_table import TransactionsTable
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -52,11 +53,8 @@ class MainWindow(QMainWindow):
 
         self.layout.addLayout(buttons_layout)
 
-        self.table = QTableWidget()
-        self.table.setColumnCount(5)
-        self.table.setHorizontalHeaderLabels(["Data", "Descrição", "Valor", "Categoria", "Tipo"])
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.setAlternatingRowColors(True)
+        # Tabela de transações
+        self.table = TransactionsTable()
 
         self.layout.addWidget(self.table)
 
@@ -115,49 +113,6 @@ class MainWindow(QMainWindow):
             self._update_table()
 
     def _update_table(self):
-
-        transactions = self.finance.transactions
-
-        self.table.setRowCount(len(transactions))
-
-        for row, transaction in enumerate(transactions):
-
-            self.table.setItem(
-                row,
-                0,
-                QTableWidgetItem(
-                    transaction.date.strftime("%d/%m/%Y")
-                )
-            )
-
-            self.table.setItem(
-                row,
-                1,
-                QTableWidgetItem(
-                    transaction.description
-                )
-            )
-
-            self.table.setItem(
-                row,
-                2,
-                QTableWidgetItem(
-                    transaction.category
-                )
-            )
-
-            self.table.setItem(
-                row,
-                3,
-                QTableWidgetItem(
-                    transaction.transaction_type
-                )
-            )
-
-            self.table.setItem(
-                row,
-                4,
-                QTableWidgetItem(
-                    f"R$ {transaction.value:.2f}"
-                )
-            )
+        self.table.load_transactions(
+            self.finance.transactions
+        )

@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QLabel,
-    QPushButton, QHBoxLayout
+    QPushButton, QHBoxLayout, QTableWidget, QTableWidgetItem
 )
 
 from app.services.finance_service import FinanceService
@@ -52,6 +52,14 @@ class MainWindow(QMainWindow):
 
         self.layout.addLayout(buttons_layout)
 
+        self.table = QTableWidget()
+        self.table.setColumnCount(5)
+        self.table.setHorizontalHeaderLabels(["Data", "Descrição", "Valor", "Categoria", "Tipo"])
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.setAlternatingRowColors(True)
+
+        self.layout.addWidget(self.table)
+
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
 
@@ -81,6 +89,8 @@ class MainWindow(QMainWindow):
 
             self._update_dashboard()
 
+            self._update_table()
+
     def _add_expense(self):
 
         dialog = TransactionDialog("Despesa")
@@ -101,3 +111,53 @@ class MainWindow(QMainWindow):
             self.finance.add_transaction(transaction)
 
             self._update_dashboard()
+
+            self._update_table()
+
+    def _update_table(self):
+
+        transactions = self.finance.transactions
+
+        self.table.setRowCount(len(transactions))
+
+        for row, transaction in enumerate(transactions):
+
+            self.table.setItem(
+                row,
+                0,
+                QTableWidgetItem(
+                    transaction.date.strftime("%d/%m/%Y")
+                )
+            )
+
+            self.table.setItem(
+                row,
+                1,
+                QTableWidgetItem(
+                    transaction.description
+                )
+            )
+
+            self.table.setItem(
+                row,
+                2,
+                QTableWidgetItem(
+                    transaction.category
+                )
+            )
+
+            self.table.setItem(
+                row,
+                3,
+                QTableWidgetItem(
+                    transaction.transaction_type
+                )
+            )
+
+            self.table.setItem(
+                row,
+                4,
+                QTableWidgetItem(
+                    f"R$ {transaction.value:.2f}"
+                )
+            )

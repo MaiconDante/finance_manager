@@ -105,6 +105,10 @@ class MainWindow(QMainWindow):
             self._exit_app
         )
 
+        self.income_page.income_created.connect(
+            self._refresh_dashboard
+        )
+
     def _exit_app(self):
 
         resp = QMessageBox.question(
@@ -116,4 +120,8 @@ class MainWindow(QMainWindow):
 
         if resp == QMessageBox.Yes:
             self.close()
+
+    def _refresh_dashboard(self):
+
+     self.dashboard_page.refresh()
             

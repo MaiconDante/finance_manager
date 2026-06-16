@@ -6,14 +6,17 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QHBoxLayout,
-    QComboBox
+    QComboBox,
+    QMessageBox
 )
-
+from PySide6.QtCore import Signal
 from datetime import date
 from app.models.transaction import Transaction
 from app.ui.widgets.income_table import IncomeTable
 
 class IncomePage(QWidget):
+
+    income_created = Signal()
 
     def __init__(self, finance_service):
 
@@ -125,6 +128,10 @@ class IncomePage(QWidget):
             self.table
         )
 
+        self.table.load_income(
+            self.finance.transactions
+        )
+
         self.setLayout(
             main_layout
         )
@@ -138,6 +145,10 @@ class IncomePage(QWidget):
         )
 
     def _save_income(self):
+
+        if not self._validate_form():
+            
+            return   
 
         transaction = Transaction(
 
@@ -165,6 +176,8 @@ class IncomePage(QWidget):
             self.finance.transactions
         )
 
+        self.income_created.emit()
+
         self._clear_form()
 
     def _clear_form(self):
@@ -174,3 +187,49 @@ class IncomePage(QWidget):
         self.value_input.clear()
 
         self.payment_combo.setCurrentIndex(0)
+
+    def _validate_form(self):
+
+        value = self.value_input.text().strip()
+
+
+        if not value:
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Informe um valor."
+            )
+
+            return False
+
+
+        try:
+
+            value = float(value)
+
+
+        except ValueError:
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Digite um valor numérico válido."
+            )
+
+            return False
+
+
+
+        if value <= 0:
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "O valor deve ser maior que zero."
+            )
+
+            return False
+
+
+        return True

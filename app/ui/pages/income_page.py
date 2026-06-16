@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
 
 from datetime import date
 from app.models.transaction import Transaction
+from app.ui.widgets.income_table import IncomeTable
 
 class IncomePage(QWidget):
 
@@ -72,6 +73,22 @@ class IncomePage(QWidget):
             self.value_input
         )
 
+        self.payment_combo = QComboBox()
+
+        self.payment_combo.addItems(
+            [
+                "PIX",
+                "Cartão de Crédito",
+                "Dinheiro",
+                "Outros"
+            ]
+        )
+
+        form_layout.addRow(
+            "Forma de Pagamento:",
+            self.payment_combo
+        )
+
         main_layout.addLayout(
             form_layout
         )
@@ -102,6 +119,12 @@ class IncomePage(QWidget):
             buttons_layout
         )
 
+        self.table = IncomeTable()
+
+        main_layout.addWidget(
+            self.table
+        )
+
         self.setLayout(
             main_layout
         )
@@ -130,7 +153,7 @@ class IncomePage(QWidget):
 
             transaction_type="Renda",
 
-            payment_method=""
+            payment_method=self.payment_combo.currentText()
         )
 
 
@@ -138,6 +161,9 @@ class IncomePage(QWidget):
             transaction
         )
 
+        self.table.load_income(
+            self.finance.transactions
+        )
 
         self._clear_form()
 
@@ -146,3 +172,5 @@ class IncomePage(QWidget):
         self.income_type_combo.setCurrentIndex(0)
 
         self.value_input.clear()
+
+        self.payment_combo.setCurrentIndex(0)

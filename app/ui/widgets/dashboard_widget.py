@@ -74,7 +74,7 @@ class DashboardWidget(QWidget):
             text = i["text"]
             type_ = i["type"]
 
-            if "economizou" in text.lower() or "economizou" in text:
+            if "economizou" in text.lower():
 
                 prefix = "💰 "
 

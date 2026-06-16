@@ -105,3 +105,10 @@ QFrame#financialCard[type="balance"] {
     background-color: #1b2a4a;
     border: 2px solid #60a5fa;
 }
+
+QFrame#financialCard:hover {
+
+    border: 1px solid #3b82f6;
+    border-radius: 12px;
+
+}

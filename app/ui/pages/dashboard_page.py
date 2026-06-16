@@ -1,7 +1,6 @@
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
-    QHBoxLayout
 )
 from app.ui.widgets.dashboard_widget import DashboardWidget
 from app.ui.widgets.charts_widget import ChartsWidget
@@ -14,11 +13,11 @@ class DashboardPage(QWidget):
         self.finance = finance_service
 
         self._setup_ui()
-        self._update_content()
+        self.refresh()
 
     def _setup_ui(self):
 
-        self.layout = QVBoxLayout()
+        layout = QVBoxLayout()
 
         # 🔹 Cards + Insights
         self.dashboard = DashboardWidget()
@@ -26,12 +25,12 @@ class DashboardPage(QWidget):
         # 🔹 Gráficos
         self.charts = ChartsWidget()
 
-        self.layout.addWidget(self.dashboard)
-        self.layout.addWidget(self.charts)
+        layout.addWidget(self.dashboard)
+        layout.addWidget(self.charts)
 
-        self.setLayout(self.layout)
+        self.setLayout(layout)
 
-    def _update_content(self):
+    def refresh(self):
 
         transactions = self.finance.transactions
 

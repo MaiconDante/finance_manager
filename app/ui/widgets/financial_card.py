@@ -28,8 +28,6 @@ class FinancialCard(QFrame):
         self.title_label.setObjectName("cardTitle")
         self.value_label.setObjectName("cardValue")
 
-        self.setAttribute(Qt.WidgetAttribute.WA_Hover, True)
-
         layout.addWidget(self.title_label)
         layout.addWidget(self.value_label)
 
@@ -38,7 +36,7 @@ class FinancialCard(QFrame):
     def update_value(self, value):
 
         self.value_label.setText(
-            f"R$ {value:.2f}"
+            f"R$ {value:,.2f}"
         )
 
     def _apply_style(self):
@@ -54,15 +52,3 @@ class FinancialCard(QFrame):
 
         else:
             self.setProperty("type", "default")
-
-    def enterEvent(self, event):
-        self.setStyleSheet("""
-            QFrame#financialCard {
-                background-color: #25253a;
-                border: 1px solid #3b82f6;
-                border-radius: 12px;
-            }
-        """)
-
-    def leaveEvent(self, event):
-        self.setStyleSheet("")

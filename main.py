@@ -11,7 +11,7 @@ def load_styles(app):
         app.setStyleSheet(stream.readAll())
 
 def main():
-    app = QApplication(["Finance Manager"])
+    app = QApplication([])
     load_styles(app)
 
     window = MainWindow()

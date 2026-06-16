@@ -75,6 +75,16 @@ class ChartsWidget(QWidget):
                 autopct="%1.1f%%"
             )
 
+        else:
+            
+            ax.text(
+                0.5,
+                0.5,
+                "Sem despesas cadastradas",
+                ha="center",
+                va="center"
+            )
+
         ax.set_title(
             "Despesas por Categoria"
         )

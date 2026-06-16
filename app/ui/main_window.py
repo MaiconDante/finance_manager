@@ -39,6 +39,8 @@ class MainWindow(QMainWindow):
         main_widget = QWidget()
 
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         layout.addWidget(self.navbar)
         layout.addWidget(self.stack)
 
@@ -48,15 +50,28 @@ class MainWindow(QMainWindow):
 
     def _setup_pages(self):
 
-        self.dashboard_page = DashboardPage(self.finance)
+        self.dashboard_page = DashboardPage(
+            self.finance
+        )
 
-        self.income_page = IncomePage()
 
-        self.expenses_var_page = ExpensesVariablePage()
+        self.income_page = IncomePage(
+            self.finance
+        )
 
-        self.expenses_fix_page = ExpensesFixedPage()
 
-        self.settings_page = FinanceSettingsPage()
+        self.expenses_var_page = ExpensesVariablePage(
+            self.finance
+        )
+
+
+        self.expenses_fix_page = ExpensesFixedPage(
+            self.finance
+        )
+
+        self.settings_page = FinanceSettingsPage(
+            self.finance
+        )
 
         self.stack.addWidget(self.dashboard_page)      # index 0
         self.stack.addWidget(self.income_page)         # index 1

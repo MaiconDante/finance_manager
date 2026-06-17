@@ -9,14 +9,18 @@ from PySide6.QtWidgets import (
     QComboBox,
     QMessageBox
 )
+
 from PySide6.QtCore import Signal, Qt
 from datetime import date
+
 from app.models.transaction import Transaction
 from app.ui.widgets.income_table import IncomeTable
+
 
 class IncomePage(QWidget):
 
     income_created = Signal()
+
 
     def __init__(self, finance_service):
 
@@ -33,9 +37,6 @@ class IncomePage(QWidget):
 
         main_layout = QVBoxLayout()
 
-        # ==========================
-        # TITULO
-        # ==========================
 
         title = QLabel("💰 Rendas")
 
@@ -45,11 +46,10 @@ class IncomePage(QWidget):
 
         main_layout.addWidget(title)
 
-        # ==========================
-        # FORMULARIO
-        # ==========================
+
 
         form_layout = QFormLayout()
+
 
         form_layout.setLabelAlignment(
             Qt.AlignLeft
@@ -63,12 +63,17 @@ class IncomePage(QWidget):
             15
         )
 
+
         self.income_type_combo = QComboBox()
 
         self.income_type_combo.setObjectName(
             "modernCombo"
         )
-        self.income_type_combo.setMinimumWidth(350)
+
+        self.income_type_combo.setMinimumWidth(
+            350
+        )
+
 
         self.income_type_combo.addItems(
             [
@@ -81,19 +86,18 @@ class IncomePage(QWidget):
             ]
         )
 
+
         self.value_input = QLineEdit()
 
-        self.value_input.setMinimumWidth(350)
-
-        form_layout.addRow(
-            "Tipo de Renda:",
-            self.income_type_combo
+        self.value_input.setObjectName(
+            "modernLineEdit"
         )
 
-        form_layout.addRow(
-            "Valor:",
-            self.value_input
+        self.value_input.setMinimumWidth(
+            350
         )
+
+
 
         self.payment_combo = QComboBox()
 
@@ -101,17 +105,10 @@ class IncomePage(QWidget):
             "modernCombo"
         )
 
-        self.value_input.setEnabled(False)
-
-        self.income_type_combo.setEnabled(False)
-
-        self.payment_combo.setEnabled(False)
-
-        self.value_input.setObjectName(
-            "modernLineEdit"
+        self.payment_combo.setMinimumWidth(
+            350
         )
 
-        self.payment_combo.setMinimumWidth(350)
 
         self.payment_combo.addItems(
             [
@@ -122,23 +119,44 @@ class IncomePage(QWidget):
             ]
         )
 
+
+        form_layout.addRow(
+            "Tipo de Renda:",
+            self.income_type_combo
+        )
+
+
+        form_layout.addRow(
+            "Valor:",
+            self.value_input
+        )
+
+
         form_layout.addRow(
             "Forma de Pagamento:",
             self.payment_combo
         )
 
+
         container = QWidget()
-        container.setObjectName("formContainer")
 
-        container.setLayout(form_layout)
+        container.setObjectName(
+            "formContainer"
+        )
 
-        main_layout.addWidget(container)
+        container.setLayout(
+            form_layout
+        )
 
-        # ==========================
-        # BOTOES
-        # ==========================
+
+        main_layout.addWidget(
+            container
+        )
+
+
 
         buttons_layout = QHBoxLayout()
+
 
         self.save_button = QPushButton(
             "Salvar"
@@ -148,6 +166,7 @@ class IncomePage(QWidget):
             "saveButton"
         )
 
+
         self.edit_button = QPushButton(
             "Editar"
         )
@@ -155,6 +174,7 @@ class IncomePage(QWidget):
         self.edit_button.setObjectName(
             "editButton"
         )
+
 
         self.delete_button = QPushButton(
             "Excluir"
@@ -173,6 +193,8 @@ class IncomePage(QWidget):
             "clearButton"
         )
 
+
+
         buttons_layout.addWidget(
             self.save_button
         )
@@ -189,43 +211,57 @@ class IncomePage(QWidget):
             self.clear_button
         )
 
+
         main_layout.addLayout(
             buttons_layout
         )
 
+
+
         self.table = IncomeTable()
+
 
         main_layout.addWidget(
             self.table
         )
 
+
         self.table.load_income(
             self.finance.transactions
         )
+
 
         self.setLayout(
             main_layout
         )
 
+
+
         self.save_button.clicked.connect(
             self._save_income
         )
+
 
         self.edit_button.clicked.connect(
             self._edit_income
         )
 
+
         self.delete_button.clicked.connect(
             self._delete_income
         )
+
+
+        self.clear_button.clicked.connect(
+            self._clear_form
+        )
+
 
         self.table.cellClicked.connect(
             self._select_income
         )
 
-        self.clear_button.clicked.connect(
-            self._clear_form
-        )
+
 
     def _save_income(self):
 
@@ -233,7 +269,10 @@ class IncomePage(QWidget):
 
             return
 
+
+
         if self.selected_income:
+
 
             self.selected_income.description = (
                 self.income_type_combo.currentText()
@@ -255,10 +294,15 @@ class IncomePage(QWidget):
             )
 
 
-            self.selected_income = None
+            QMessageBox.information(
+                self,
+                "Sucesso",
+                "Renda atualizada com sucesso."
+            )
 
 
         else:
+
 
             transaction = Transaction(
 
@@ -275,6 +319,7 @@ class IncomePage(QWidget):
                 transaction_type="Renda",
 
                 payment_method=self.payment_combo.currentText()
+
             )
 
 
@@ -282,164 +327,28 @@ class IncomePage(QWidget):
                 transaction
             )
 
+
+            QMessageBox.information(
+                self,
+                "Sucesso",
+                "Renda cadastrada com sucesso."
+            )
+
+
+
         self.table.load_income(
             self.finance.transactions
         )
 
+
         self.income_created.emit()
+
 
         self._clear_form()
 
-        self.income_type_combo.setEnabled(False)
 
-        self.value_input.setEnabled(False)
 
-        self.payment_combo.setEnabled(False)
-
-
-    def _select_income(self, row, column):
-
-        incomes = [
-
-            t for t in self.finance.transactions
-
-            if t.transaction_type == "Renda"
-
-        ]
-
-
-        if row < len(incomes):
-
-            self.selected_income = incomes[row]
-
-
-            self.income_type_combo.setCurrentText(
-                self.selected_income.description
-            )
-
-
-            self.value_input.setText(
-                str(self.selected_income.value)
-            )
-
-
-            self.payment_combo.setCurrentText(
-                self.selected_income.payment_method
-            )
-
-
-    def _delete_income(self):
-
-        row = self.table.currentRow()
-
-
-        if row < 0:
-
-            QMessageBox.warning(
-                self,
-                "Atenção",
-                "Selecione uma renda para excluir."
-            )
-
-            return
-
-
-        confirm = QMessageBox.question(
-            self,
-            "Excluir",
-            "Deseja realmente excluir essa renda?",
-            QMessageBox.Yes | QMessageBox.No
-        )
-
-
-        if confirm == QMessageBox.Yes:
-
-            income = [
-                t for t in self.finance.transactions
-                if t.transaction_type == "Renda"
-            ][row]
-
-
-            self.finance.delete_transaction(
-                income
-            )
-
-
-            self.table.load_income(
-                self.finance.transactions
-            )
-
-            self.income_created.emit()
-
-    def _clear_form(self):
-
-        self.income_type_combo.setCurrentIndex(0)
-
-        self.value_input.clear()
-
-        self.payment_combo.setCurrentIndex(0)
-
-    def _validate_form(self):
-
-        value = self.value_input.text().strip()
-
-
-        if not value:
-
-            QMessageBox.warning(
-                self,
-                "Atenção",
-                "Informe um valor."
-            )
-
-            return False
-
-
-        try:
-
-            value = float(value)
-
-
-        except ValueError:
-
-            QMessageBox.warning(
-                self,
-                "Atenção",
-                "Digite um valor numérico válido."
-            )
-
-            return False
-
-
-
-        if value <= 0:
-
-            QMessageBox.warning(
-                self,
-                "Atenção",
-                "O valor deve ser maior que zero."
-            )
-
-            return False
-
-
-        return True
-    
-
-    def _edit_income(self):
-
-        row = self.table.currentRow()
-
-
-        if row < 0:
-
-            QMessageBox.warning(
-                self,
-                "Atenção",
-                "Selecione uma renda."
-            )
-
-            return
+    def _select_income(self,row,column):
 
 
         incomes = [
@@ -469,10 +378,171 @@ class IncomePage(QWidget):
         )
 
 
-        # libera edição
 
-        self.income_type_combo.setEnabled(True)
+    def _edit_income(self):
 
-        self.value_input.setEnabled(True)
 
-        self.payment_combo.setEnabled(True)
+        row = self.table.currentRow()
+
+
+        if row < 0:
+
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Selecione uma renda para editar."
+            )
+
+            return
+
+
+
+        self._select_income(row,0)
+
+
+
+    def _delete_income(self):
+
+
+        row = self.table.currentRow()
+
+
+        if row < 0:
+
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Selecione uma renda para excluir."
+            )
+
+            return
+
+
+
+        confirm = QMessageBox.question(
+
+            self,
+            "Excluir",
+
+            "Deseja realmente excluir esta renda?",
+
+            QMessageBox.Yes |
+            QMessageBox.No
+
+        )
+
+
+
+        if confirm == QMessageBox.Yes:
+
+
+            incomes = [
+
+                t for t in self.finance.transactions
+
+                if t.transaction_type == "Renda"
+
+            ]
+
+
+            income = incomes[row]
+
+
+            self.finance.delete_transaction(
+                income
+            )
+
+
+            self.table.load_income(
+                self.finance.transactions
+            )
+
+
+            self.income_created.emit()
+
+
+            QMessageBox.information(
+                self,
+                "Sucesso",
+                "Renda excluída com sucesso."
+            )
+
+
+            self._clear_form()
+
+
+
+    def _clear_form(self):
+
+
+        self.income_type_combo.setCurrentIndex(0)
+
+        self.value_input.clear()
+
+        self.payment_combo.setCurrentIndex(0)
+
+
+        self.selected_income = None
+
+
+        self.table.clearSelection()
+
+
+
+    def _validate_form(self):
+
+
+        value = self.value_input.text().strip()
+
+
+        if not value:
+
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Informe um valor."
+            )
+
+
+            return False
+
+
+
+        try:
+
+            value = float(value)
+
+
+        except ValueError:
+
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Digite um valor válido."
+            )
+
+
+            return False
+
+
+
+        if value <= 0:
+
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "O valor deve ser maior que zero."
+            )
+
+
+            return False
+
+
+
+        return True
+    

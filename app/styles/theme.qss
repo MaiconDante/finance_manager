@@ -1,3 +1,7 @@
+/* =====================================================
+   GLOBAL
+===================================================== */
+
 QMainWindow {
     background-color: #0f0f17;
 }
@@ -24,10 +28,6 @@ QFrame {
     border-radius: 10px;
     padding: 10px;
     border: 1px solid #dcdde1;
-}
-
-QTableWidget  {
-    color: black;
 }
 
 QFrame#financialCard {
@@ -82,14 +82,6 @@ QWidget {
     color: #ffffff;
 }
 
-QTextEdit {
-    background-color: #1e1e2f;
-    border-radius: 10px;
-    padding: 10px;
-    border: 1px solid #2a2a3d;
-    color: #d0d0e0;
-}
-
 QFrame#financialCard[type="balance"] {
     background-color: #1b2a4a;
     border: 2px solid #60a5fa;
@@ -99,5 +91,247 @@ QFrame#financialCard:hover {
 
     border: 1px solid #3b82f6;
     border-radius: 12px;
+
+}
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+
+
+/* =====================================================
+   CARDS FINANCEIROS
+===================================================== */
+
+
+
+/* =====================================================
+   INSIGHTS
+===================================================== */
+
+
+
+/* =====================================================
+   GRAFICOS
+===================================================== */
+
+
+
+/* =====================================================
+   PAGINA RENDAS
+===================================================== */
+
+QLabel#pageTitle {
+
+    background-color: #026020;
+
+    color: white;
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+}
+QWidget#formContainer {
+
+    background-color: #1e1e2f;
+
+    border: 1px solid #2a2a3d;
+
+    border-radius: 10px;
+
+    padding: 15px;
+
+}
+
+/* =====================================================
+   TABELAS
+===================================================== */
+
+QTableWidget {
+
+    background-color: #1e1e2f;
+
+    border: 1px solid #2a2a3d;
+
+    border-radius: 10px;
+
+    color: white;
+
+    gridline-color: #2a2a3d;
+
+    alternate-background-color: #25253a;
+
+    selection-background-color: #2563eb;
+
+    font-size: 13px;
+
+}
+
+QTableWidget::item {
+
+    padding: 8px;
+
+}
+
+QTableWidget::item:selected {
+
+    background-color: #2563eb;
+
+    color: white;
+
+}
+
+QTableWidget::item:hover {
+
+    background-color: #2d3748;
+
+}
+
+QHeaderView::section {
+
+    background-color: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    padding: 6px;
+
+    font: bold 14px Arial;
+
+}
+
+/* =====================================================
+   FORMULARIOS
+===================================================== */
+
+QLineEdit#modernLineEdit,
+QComboBox#modernCombo {
+
+    min-height: 42px;
+
+    min-width: 350px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 8px;
+
+    padding-left: 12px;
+
+    background-color: white;
+
+    color: black;
+
+    font-size: 14px;
+
+}
+
+QComboBox#modernCombo QAbstractItemView {
+
+    background-color: white;
+
+    color: black;
+
+    min-width: 300px;
+
+    selection-background-color: #2563eb;
+
+    selection-color: white;
+
+}
+
+
+QComboBox#modernCombo {
+
+    padding-right: 35px;
+
+}
+
+
+QComboBox#modernCombo::drop-down {
+
+    border: none;
+
+    width: 30px;
+
+}
+
+/* =====================================================
+   BOTÕES
+===================================================== */
+
+QPushButton#saveButton {
+
+    background-color: #0e6920;
+
+    color: white;
+
+    min-height: 38px;
+
+    min-width: 120px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+QPushButton#saveButton:hover {
+
+    background-color: #0e8c27;
+
+    color: white;
+
+    min-height: 38px;
+
+    min-width: 120px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+QPushButton#cancelButton {
+
+    background-color: #c21515;
+
+    color: white;
+
+    min-height: 38px;
+
+    min-width: 120px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+QPushButton#cancelButton:hover {
+
+    background-color: #f01515;
+
+    color: white;
+
+    min-height: 38px;
+
+    min-width: 120px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
 
 }

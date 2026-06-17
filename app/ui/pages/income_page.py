@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QMessageBox
 )
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 from datetime import date
 from app.models.transaction import Transaction
 from app.ui.widgets.income_table import IncomeTable
@@ -31,7 +31,6 @@ class IncomePage(QWidget):
 
         main_layout = QVBoxLayout()
 
-
         # ==========================
         # TITULO
         # ==========================
@@ -44,14 +43,30 @@ class IncomePage(QWidget):
 
         main_layout.addWidget(title)
 
-
         # ==========================
         # FORMULARIO
         # ==========================
 
         form_layout = QFormLayout()
 
+        form_layout.setLabelAlignment(
+            Qt.AlignLeft
+        )
+
+        form_layout.setHorizontalSpacing(
+            30
+        )
+
+        form_layout.setVerticalSpacing(
+            15
+        )
+
         self.income_type_combo = QComboBox()
+
+        self.income_type_combo.setObjectName(
+            "modernCombo"
+        )
+        self.income_type_combo.setMinimumWidth(350)
 
         self.income_type_combo.addItems(
             [
@@ -66,6 +81,12 @@ class IncomePage(QWidget):
 
         self.value_input = QLineEdit()
 
+        self.value_input.setObjectName(
+            "modernLineEdit"
+        )
+
+        self.value_input.setMinimumWidth(350)
+
         form_layout.addRow(
             "Tipo de Renda:",
             self.income_type_combo
@@ -77,6 +98,11 @@ class IncomePage(QWidget):
         )
 
         self.payment_combo = QComboBox()
+
+        self.payment_combo.setObjectName(
+            "modernCombo"
+        )
+        self.payment_combo.setMinimumWidth(350)
 
         self.payment_combo.addItems(
             [
@@ -92,9 +118,12 @@ class IncomePage(QWidget):
             self.payment_combo
         )
 
-        main_layout.addLayout(
-            form_layout
-        )
+        container = QWidget()
+        container.setObjectName("formContainer")
+
+        container.setLayout(form_layout)
+
+        main_layout.addWidget(container)
 
         # ==========================
         # BOTOES
@@ -106,8 +135,15 @@ class IncomePage(QWidget):
             "Salvar"
         )
 
+        self.save_button.setObjectName(
+            "saveButton"
+        )
+
         self.cancel_button = QPushButton(
             "Cancelar"
+        )
+        self.cancel_button.setObjectName(
+            "cancelButton"
         )
 
         buttons_layout.addWidget(

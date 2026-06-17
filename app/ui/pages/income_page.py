@@ -390,10 +390,11 @@ class IncomePage(QWidget):
 
     def _edit_income(self):
 
-        row = self.table.currentRow()
+        selected = self.table.selectedItems()
 
 
-        if row < 0:
+        if not selected:
+
 
             QMessageBox.warning(
                 self,
@@ -401,11 +402,16 @@ class IncomePage(QWidget):
                 "Selecione uma renda para editar."
             )
 
+
             return
 
 
 
+        row = self.table.currentRow()
+
+
         self._select_income(row,0)
+
 
 
         self.income_type_combo.setCurrentText(
@@ -423,6 +429,7 @@ class IncomePage(QWidget):
         )
 
 
+
         self.save_button.setText(
             "Atualizar"
         )
@@ -432,29 +439,26 @@ class IncomePage(QWidget):
 
 
 
-        def _select_income(self,row,column):
+    def _select_income(self,row,column):
 
-            incomes = [
+        incomes = [
 
-                t for t in self.finance.transactions
+            t for t in self.finance.transactions
 
-                if t.transaction_type == "Renda"
+            if t.transaction_type == "Renda"
 
-            ]
+        ]
 
 
-            if row < len(incomes):
+        if row < len(incomes):
 
-                self.selected_income = incomes[row]
+            self.selected_income = incomes[row]
 
 
     def _delete_income(self):
 
 
-        row = self.table.currentRow()
-
-
-        if row < 0:
+        if not self.table.selectedItems():
 
 
             QMessageBox.warning(
@@ -463,7 +467,12 @@ class IncomePage(QWidget):
                 "Selecione uma renda para excluir."
             )
 
+
             return
+
+
+
+        row = self.table.currentRow()
 
 
 
@@ -542,6 +551,7 @@ class IncomePage(QWidget):
 
         self.editing_mode = False
 
+        self.table.setCurrentCell(-1,-1)
 
 
     def _validate_form(self):

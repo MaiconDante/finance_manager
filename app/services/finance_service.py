@@ -12,6 +12,10 @@ class FinanceService:
         repository.insert_transaction(transaction)
         self.transactions.append(transaction)
 
+    def delete_transaction(self, transaction):
+        repository.delete_transaction(transaction)
+        self.transactions.remove(transaction)
+
     def total_income(self):
         return sum(
             transaction.value

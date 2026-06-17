@@ -314,7 +314,7 @@ QPushButton#saveButton:hover {
 
 }
 
-QPushButton#cancelButton {
+QPushButton#deleteButton {
 
     background-color: #c21515;
 
@@ -330,7 +330,7 @@ QPushButton#cancelButton {
 
 }
 
-QPushButton#cancelButton:hover {
+QPushButton#deleteButton:hover {
 
     background-color: #f01515;
 

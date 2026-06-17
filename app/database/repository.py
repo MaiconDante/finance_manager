@@ -71,3 +71,30 @@ def get_all_transactions():
         )
 
     return transactions
+
+
+def delete_transaction(transaction):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+
+    cursor.execute(
+        """
+        DELETE FROM transactions
+        WHERE date = ?
+        AND description = ?
+        AND value = ?
+        """,
+        (
+            transaction.date.isoformat(),
+            transaction.description,
+            transaction.value
+        )
+    )
+
+
+    conn.commit()
+
+    conn.close()

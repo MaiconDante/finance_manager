@@ -139,11 +139,21 @@ class IncomePage(QWidget):
             "saveButton"
         )
 
-        self.cancel_button = QPushButton(
-            "Cancelar"
+        self.delete_button = QPushButton(
+            "Excluir"
         )
-        self.cancel_button.setObjectName(
-            "cancelButton"
+
+        self.delete_button.setObjectName(
+            "deleteButton"
+        )
+
+
+        self.clear_button = QPushButton(
+            "Limpar"
+        )
+
+        self.clear_button.setObjectName(
+            "clearButton"
         )
 
         buttons_layout.addWidget(
@@ -151,7 +161,11 @@ class IncomePage(QWidget):
         )
 
         buttons_layout.addWidget(
-            self.cancel_button
+            self.delete_button
+        )
+
+        buttons_layout.addWidget(
+            self.clear_button
         )
 
         main_layout.addLayout(
@@ -176,7 +190,11 @@ class IncomePage(QWidget):
             self._save_income
         )
 
-        self.cancel_button.clicked.connect(
+        self.delete_button.clicked.connect(
+            self._delete_income
+        )
+
+        self.clear_button.clicked.connect(
             self._clear_form
         )
 
@@ -215,6 +233,50 @@ class IncomePage(QWidget):
         self.income_created.emit()
 
         self._clear_form()
+
+
+    def _delete_income(self):
+
+        row = self.table.currentRow()
+
+
+        if row < 0:
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Selecione uma renda para excluir."
+            )
+
+            return
+
+
+        confirm = QMessageBox.question(
+            self,
+            "Excluir",
+            "Deseja realmente excluir essa renda?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+
+        if confirm == QMessageBox.Yes:
+
+            income = [
+                t for t in self.finance.transactions
+                if t.transaction_type == "Renda"
+            ][row]
+
+
+            self.finance.delete_transaction(
+                income
+            )
+
+
+            self.table.load_income(
+                self.finance.transactions
+            )
+
+            self.income_created.emit()
 
     def _clear_form(self):
 

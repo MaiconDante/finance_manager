@@ -139,6 +139,14 @@ class IncomePage(QWidget):
             "saveButton"
         )
 
+        self.edit_button = QPushButton(
+            "Editar"
+        )
+
+        self.edit_button.setObjectName(
+            "editButton"
+        )
+
         self.delete_button = QPushButton(
             "Excluir"
         )
@@ -158,6 +166,10 @@ class IncomePage(QWidget):
 
         buttons_layout.addWidget(
             self.save_button
+        )
+
+        buttons_layout.addWidget(
+            self.edit_button
         )
 
         buttons_layout.addWidget(
@@ -188,6 +200,10 @@ class IncomePage(QWidget):
 
         self.save_button.clicked.connect(
             self._save_income
+        )
+
+        self.edit_button.clicked.connect(
+            self._edit_income
         )
 
         self.delete_button.clicked.connect(

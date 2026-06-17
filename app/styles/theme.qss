@@ -155,6 +155,112 @@ QWidget#formContainer {
 }
 
 /* =====================================================
+   BOTÕES - PAGINA RENDAS
+===================================================== */
+
+
+QPushButton#saveButton {
+
+    background-color: #0e6920;
+
+    color: white;
+
+    min-height: 38px;
+
+    min-width: 120px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+
+QPushButton#saveButton:hover {
+
+    background-color: #0e8c27;
+
+}
+
+
+/* EDITAR */
+
+QPushButton#editButton {
+
+    background-color: #2563eb;
+
+    color: white;
+
+    min-height: 38px;
+
+    min-width: 120px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+
+QPushButton#editButton:hover {
+
+    background-color: #3b82f6;
+
+}
+
+
+/* EXCLUIR */
+
+QPushButton#deleteButton {
+
+    background-color: #c21515;
+
+    color: white;
+
+    min-height: 38px;
+
+    min-width: 120px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+
+QPushButton#deleteButton:hover {
+
+    background-color: #f01515;
+
+}
+
+
+/* LIMPAR */
+
+QPushButton#clearButton {
+
+    background-color: #3498db;
+
+    color: white;
+
+    min-height: 38px;
+
+    min-width: 120px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+}
+
+
+QPushButton#clearButton:hover {
+
+    background-color: #2980b9;
+
+}
+
+/* =====================================================
    TABELAS
 ===================================================== */
 
@@ -280,68 +386,4 @@ QPushButton {
 
 QPushButton:hover {
     background-color: #1796ea;
-}
-
-QPushButton#saveButton {
-
-    background-color: #0e6920;
-
-    color: white;
-
-    min-height: 38px;
-
-    min-width: 120px;
-
-    border-radius: 8px;
-
-    font-weight: bold;
-
-}
-
-QPushButton#saveButton:hover {
-
-    background-color: #0e8c27;
-
-    color: white;
-
-    min-height: 38px;
-
-    min-width: 120px;
-
-    border-radius: 8px;
-
-    font-weight: bold;
-
-}
-
-QPushButton#deleteButton {
-
-    background-color: #c21515;
-
-    color: white;
-
-    min-height: 38px;
-
-    min-width: 120px;
-
-    border-radius: 8px;
-
-    font-weight: bold;
-
-}
-
-QPushButton#deleteButton:hover {
-
-    background-color: #f01515;
-
-    color: white;
-
-    min-height: 38px;
-
-    min-width: 120px;
-
-    border-radius: 8px;
-
-    font-weight: bold;
-
 }

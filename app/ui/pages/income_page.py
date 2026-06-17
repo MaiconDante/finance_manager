@@ -30,13 +30,14 @@ class IncomePage(QWidget):
 
         self.selected_income = None
 
+        self.editing_mode = False
+
         self._setup_ui()
 
 
     def _setup_ui(self):
 
         main_layout = QVBoxLayout()
-
 
         title = QLabel("💰 Rendas")
 
@@ -45,7 +46,6 @@ class IncomePage(QWidget):
         )
 
         main_layout.addWidget(title)
-
 
 
         form_layout = QFormLayout()
@@ -162,6 +162,10 @@ class IncomePage(QWidget):
             "Salvar"
         )
 
+        self.save_button.setText(
+            "Salvar"
+        )
+
         self.save_button.setObjectName(
             "saveButton"
         )
@@ -257,18 +261,17 @@ class IncomePage(QWidget):
         )
 
 
-        self.table.cellClicked.connect(
+        self.table.cellDoubleClicked.connect(
             self._select_income
         )
 
 
 
     def _save_income(self):
-
+            
         if not self._validate_form():
 
             return
-
 
 
         if self.selected_income:
@@ -346,6 +349,12 @@ class IncomePage(QWidget):
 
         self._clear_form()
 
+        self.save_button.setText(
+            "Salvar"
+        )
+
+        self.editing_mode = False
+
 
 
     def _select_income(self,row,column):
@@ -381,12 +390,10 @@ class IncomePage(QWidget):
 
     def _edit_income(self):
 
-
         row = self.table.currentRow()
 
 
         if row < 0:
-
 
             QMessageBox.warning(
                 self,
@@ -400,6 +407,45 @@ class IncomePage(QWidget):
 
         self._select_income(row,0)
 
+
+        self.income_type_combo.setCurrentText(
+            self.selected_income.description
+        )
+
+
+        self.value_input.setText(
+            str(self.selected_income.value)
+        )
+
+
+        self.payment_combo.setCurrentText(
+            self.selected_income.payment_method
+        )
+
+
+        self.save_button.setText(
+            "Atualizar"
+        )
+
+
+        self.editing_mode = True
+
+
+
+        def _select_income(self,row,column):
+
+            incomes = [
+
+                t for t in self.finance.transactions
+
+                if t.transaction_type == "Renda"
+
+            ]
+
+
+            if row < len(incomes):
+
+                self.selected_income = incomes[row]
 
 
     def _delete_income(self):
@@ -488,6 +534,13 @@ class IncomePage(QWidget):
 
 
         self.table.clearSelection()
+
+        self.save_button.setText(
+            "Salvar"
+        )
+
+
+        self.editing_mode = False
 
 
 

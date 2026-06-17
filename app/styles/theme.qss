@@ -12,17 +12,6 @@ QLabel {
     font-weight: bold;
 }
 
-QPushButton {
-    background-color: #3498db;
-    color: white;
-    padding: 8px;
-    border-radius: 6px;
-}
-
-QPushButton:hover {
-    background-color: #2980b9;
-}
-
 QFrame {
     background-color: white;
     border-radius: 10px;
@@ -271,6 +260,17 @@ QComboBox#modernCombo::drop-down {
 /* =====================================================
    BOTÕES
 ===================================================== */
+
+QPushButton {
+    background-color: #0d69a6;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+QPushButton:hover {
+    background-color: #1796ea;
+}
 
 QPushButton#saveButton {
 

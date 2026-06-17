@@ -18,12 +18,12 @@ class DashboardWidget(QWidget):
     def _setup_ui(self):
 
         main_layout = QVBoxLayout()
-        main_layout.setSpacing(20)  # 👈 espaço entre blocos
-        main_layout.setContentsMargins(15, 15, 15, 15)
+        main_layout.setSpacing(10)  # 👈 espaço entre blocos
+        main_layout.setContentsMargins(10, 20, 10, 20)
 
         # ===== CARDS =====
         cards_layout = QHBoxLayout()
-        cards_layout.setSpacing(15)
+        cards_layout.setSpacing(10) # 👈 espaço entre os cards
 
         self.balance_card = FinancialCard("💵 Saldo", "balance")
         self.income_card = FinancialCard("💰 Renda", "income")
@@ -38,6 +38,7 @@ class DashboardWidget(QWidget):
 
         self.insights_box = QTextEdit()
         self.insights_box.setReadOnly(True)
+        self.insights_box.setFixedHeight(120)  # altura mínima para mostrar vários insights
 
         # ===== ADD TO LAYOUT =====
         main_layout.addLayout(cards_layout)

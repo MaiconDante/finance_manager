@@ -10,6 +10,7 @@ class Navbar(QWidget):
     def _setup_ui(self):
 
         layout = QHBoxLayout()
+        layout.setContentsMargins(20, 20, 20, 25)
 
         self.btn_dashboard = QPushButton("Dashboard")
         self.btn_income = QPushButton("Rendas")

@@ -105,7 +105,17 @@ QFrame#financialCard:hover {
    INSIGHTS
 ===================================================== */
 
+QLabel#sectionTitle {
 
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    padding: 8px;
+
+}
 
 /* =====================================================
    GRAFICOS

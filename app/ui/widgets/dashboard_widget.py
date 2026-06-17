@@ -34,7 +34,13 @@ class DashboardWidget(QWidget):
         cards_layout.addWidget(self.expense_card)
 
         # ===== INSIGHTS =====
-        self.insights_title = QLabel("📊 Insights Financeiros")
+        self.insights_title = QLabel(
+            "📊 Insights Financeiros"
+        )
+
+        self.insights_title.setObjectName(
+            "sectionTitle"
+        )
 
         self.insights_box = QTextEdit()
         self.insights_box.setReadOnly(True)

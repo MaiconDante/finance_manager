@@ -24,6 +24,8 @@ class IncomePage(QWidget):
 
         self.finance = finance_service
 
+        self.selected_income = None
+
         self._setup_ui()
 
 
@@ -81,10 +83,6 @@ class IncomePage(QWidget):
 
         self.value_input = QLineEdit()
 
-        self.value_input.setObjectName(
-            "modernLineEdit"
-        )
-
         self.value_input.setMinimumWidth(350)
 
         form_layout.addRow(
@@ -102,6 +100,17 @@ class IncomePage(QWidget):
         self.payment_combo.setObjectName(
             "modernCombo"
         )
+
+        self.value_input.setEnabled(False)
+
+        self.income_type_combo.setEnabled(False)
+
+        self.payment_combo.setEnabled(False)
+
+        self.value_input.setObjectName(
+            "modernLineEdit"
+        )
+
         self.payment_combo.setMinimumWidth(350)
 
         self.payment_combo.addItems(
@@ -210,6 +219,10 @@ class IncomePage(QWidget):
             self._delete_income
         )
 
+        self.table.cellClicked.connect(
+            self._select_income
+        )
+
         self.clear_button.clicked.connect(
             self._clear_form
         )
@@ -217,30 +230,57 @@ class IncomePage(QWidget):
     def _save_income(self):
 
         if not self._validate_form():
-            
-            return   
 
-        transaction = Transaction(
+            return
 
-            date=date.today(),
+        if self.selected_income:
 
-            description=self.income_type_combo.currentText(),
+            self.selected_income.description = (
+                self.income_type_combo.currentText()
+            )
 
-            value=float(
+
+            self.selected_income.value = float(
                 self.value_input.text()
-            ),
-
-            category="Renda",
-
-            transaction_type="Renda",
-
-            payment_method=self.payment_combo.currentText()
-        )
+            )
 
 
-        self.finance.add_transaction(
-            transaction
-        )
+            self.selected_income.payment_method = (
+                self.payment_combo.currentText()
+            )
+
+
+            self.finance.update_transaction(
+                self.selected_income
+            )
+
+
+            self.selected_income = None
+
+
+        else:
+
+            transaction = Transaction(
+
+                date=date.today(),
+
+                description=self.income_type_combo.currentText(),
+
+                value=float(
+                    self.value_input.text()
+                ),
+
+                category="Renda",
+
+                transaction_type="Renda",
+
+                payment_method=self.payment_combo.currentText()
+            )
+
+
+            self.finance.add_transaction(
+                transaction
+            )
 
         self.table.load_income(
             self.finance.transactions
@@ -249,6 +289,43 @@ class IncomePage(QWidget):
         self.income_created.emit()
 
         self._clear_form()
+
+        self.income_type_combo.setEnabled(False)
+
+        self.value_input.setEnabled(False)
+
+        self.payment_combo.setEnabled(False)
+
+
+    def _select_income(self, row, column):
+
+        incomes = [
+
+            t for t in self.finance.transactions
+
+            if t.transaction_type == "Renda"
+
+        ]
+
+
+        if row < len(incomes):
+
+            self.selected_income = incomes[row]
+
+
+            self.income_type_combo.setCurrentText(
+                self.selected_income.description
+            )
+
+
+            self.value_input.setText(
+                str(self.selected_income.value)
+            )
+
+
+            self.payment_combo.setCurrentText(
+                self.selected_income.payment_method
+            )
 
 
     def _delete_income(self):
@@ -347,3 +424,55 @@ class IncomePage(QWidget):
 
 
         return True
+    
+
+    def _edit_income(self):
+
+        row = self.table.currentRow()
+
+
+        if row < 0:
+
+            QMessageBox.warning(
+                self,
+                "Atenção",
+                "Selecione uma renda."
+            )
+
+            return
+
+
+        incomes = [
+
+            t for t in self.finance.transactions
+
+            if t.transaction_type == "Renda"
+
+        ]
+
+
+        self.selected_income = incomes[row]
+
+
+        self.income_type_combo.setCurrentText(
+            self.selected_income.description
+        )
+
+
+        self.value_input.setText(
+            str(self.selected_income.value)
+        )
+
+
+        self.payment_combo.setCurrentText(
+            self.selected_income.payment_method
+        )
+
+
+        # libera edição
+
+        self.income_type_combo.setEnabled(True)
+
+        self.value_input.setEnabled(True)
+
+        self.payment_combo.setEnabled(True)

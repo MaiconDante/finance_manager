@@ -12,6 +12,20 @@ class FinanceService:
         repository.insert_transaction(transaction)
         self.transactions.append(transaction)
 
+    def update_transaction(self, transaction):
+
+        repository.update_transaction(
+            transaction
+        )
+
+        for index, item in enumerate(self.transactions):
+
+            if item.id == transaction.id:
+
+                self.transactions[index] = transaction
+
+                break
+
     def delete_transaction(self, transaction):
         repository.delete_transaction(transaction)
         self.transactions.remove(transaction)

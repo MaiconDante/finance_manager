@@ -66,11 +66,49 @@ def get_all_transactions():
                 value=row[3],
                 category=row[4],
                 transaction_type=row[5],
-                payment_method=row[6]
+                payment_method=row[6],
+                id=row[0]
             )
         )
 
     return transactions
+
+
+def update_transaction(transaction):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+
+    cursor.execute(
+        """
+        UPDATE transactions
+
+        SET
+            description = ?,
+            value = ?,
+            category = ?,
+            transaction_type = ?,
+            payment_method = ?
+
+        WHERE id = ?
+
+        """,
+        (
+            transaction.description,
+            transaction.value,
+            transaction.category,
+            transaction.transaction_type,
+            transaction.payment_method,
+            transaction.id
+        )
+    )
+
+
+    conn.commit()
+
+    conn.close()
 
 
 def delete_transaction(transaction):

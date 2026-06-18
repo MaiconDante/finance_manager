@@ -109,6 +109,10 @@ class MainWindow(QMainWindow):
             self._refresh_dashboard
         )
 
+        self.expenses_var_page.expense_created.connect(
+            self._refresh_dashboard
+        )
+
     def _exit_app(self):
 
         resp = QMessageBox.question(

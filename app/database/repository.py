@@ -14,8 +14,9 @@ def create_table():
             value REAL,
             category TEXT,
             transaction_type TEXT,
-            payment_method TEXT
-        )
+            payment_method TEXT,
+            status TEXT
+                    )
     """)
 
     conn.commit()
@@ -32,16 +33,18 @@ def insert_transaction(transaction):
             value,
             category,
             transaction_type,
-            payment_method
+            payment_method,
+            status
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     """, (
         transaction.date.isoformat(),
         transaction.description,
         transaction.value,
         transaction.category,
         transaction.transaction_type,
-        transaction.payment_method
+        transaction.payment_method,
+        transaction.status
     ))
 
     conn.commit()
@@ -67,6 +70,7 @@ def get_all_transactions():
                 category=row[4],
                 transaction_type=row[5],
                 payment_method=row[6],
+                status=row[7],
                 id=row[0]
             )
         )
@@ -90,7 +94,8 @@ def update_transaction(transaction):
             value = ?,
             category = ?,
             transaction_type = ?,
-            payment_method = ?
+            payment_method = ?,
+            status = ?
 
         WHERE id = ?
 
@@ -101,6 +106,7 @@ def update_transaction(transaction):
             transaction.category,
             transaction.transaction_type,
             transaction.payment_method,
+            transaction.status,
             transaction.id
         )
     )
@@ -117,22 +123,17 @@ def delete_transaction(transaction):
 
     cursor = conn.cursor()
 
-
     cursor.execute(
         """
         DELETE FROM transactions
-        WHERE date = ?
-        AND description = ?
-        AND value = ?
+        WHERE id = ?
         """,
         (
-            transaction.date.isoformat(),
-            transaction.description,
-            transaction.value
+            transaction.id,
         )
     )
-
 
     conn.commit()
 
     conn.close()
+    

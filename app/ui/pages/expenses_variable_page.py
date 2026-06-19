@@ -2,12 +2,12 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QLabel,
-    QFormLayout,
     QLineEdit,
     QPushButton,
     QHBoxLayout,
     QComboBox,
-    QMessageBox
+    QMessageBox,
+    QGridLayout
 )
 
 from math import ceil
@@ -35,7 +35,7 @@ class ExpensesVariablePage(QWidget):
 
         self.current_page = 1
 
-        self.items_per_page = 4
+        self.items_per_page = 6
 
         self.all_expenses = []
 
@@ -67,12 +67,8 @@ class ExpensesVariablePage(QWidget):
 
 
 
-        form_layout = QFormLayout()
+        form_layout = QGridLayout()
 
-
-        form_layout.setLabelAlignment(
-            Qt.AlignLeft
-        )
 
         form_layout.setHorizontalSpacing(
             30
@@ -156,33 +152,74 @@ class ExpensesVariablePage(QWidget):
 
 
 
-        form_layout.addRow(
-            "Descrição:",
-            self.description_input
+        form_layout.addWidget(
+            QLabel("Descrição:"),
+            0,
+            0
+        )
+
+        form_layout.addWidget(
+            self.description_input,
+            0,
+            1
         )
 
 
-        form_layout.addRow(
-            "Valor:",
-            self.value_input
+        form_layout.addWidget(
+            QLabel("Valor:"),
+            0,
+            2
+        )
+
+        form_layout.addWidget(
+            self.value_input,
+            0,
+            3
         )
 
 
-        form_layout.addRow(
-            "Categoria:",
-            self.category_combo
+
+        form_layout.addWidget(
+            QLabel("Categoria:"),
+            1,
+            0
         )
 
 
-        form_layout.addRow(
-            "Pagamento:",
-            self.payment_combo
+        form_layout.addWidget(
+            self.category_combo,
+            1,
+            1
         )
 
 
-        form_layout.addRow(
-            "Situação:",
-            self.status_combo
+
+        form_layout.addWidget(
+            QLabel("Pagamento:"),
+            1,
+            2
+        )
+
+
+        form_layout.addWidget(
+            self.payment_combo,
+            1,
+            3
+        )
+
+
+
+        form_layout.addWidget(
+            QLabel("Situação:"),
+            2,
+            0
+        )
+
+
+        form_layout.addWidget(
+            self.status_combo,
+            2,
+            1
         )
 
 

@@ -266,14 +266,6 @@ class ExpensesVariablePage(QWidget):
             main_layout
         )
 
-
-
-        self.edit_button.setEnabled(False)
-
-        self.delete_button.setEnabled(False)
-
-
-
         self.save_button.clicked.connect(
             self._save_expense
         )
@@ -527,12 +519,6 @@ class ExpensesVariablePage(QWidget):
         self.save_button.setText(
             "Salvar"
         )
-
-
-        self.edit_button.setEnabled(False)
-
-        self.delete_button.setEnabled(False)
-
 
 
 

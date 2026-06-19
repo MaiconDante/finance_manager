@@ -10,6 +10,8 @@ from PySide6.QtWidgets import (
     QMessageBox
 )
 
+from math import ceil
+
 from datetime import date
 
 from app.models.transaction import Transaction
@@ -17,6 +19,7 @@ from app.models.transaction import Transaction
 from PySide6.QtCore import Qt, Signal
 
 from app.ui.widgets.expense_variable_table import ExpenseVariableTable
+
 
 
 class ExpensesVariablePage(QWidget):
@@ -30,7 +33,15 @@ class ExpensesVariablePage(QWidget):
 
         self.finance = finance_service
 
+        self.current_page = 1
+
+        self.items_per_page = 4
+
+        self.all_expenses = []
+
         self.selected_expense = None
+
+        self.editing_mode = False
 
         self._setup_ui()
 
@@ -49,19 +60,27 @@ class ExpensesVariablePage(QWidget):
             "pageTitle"
         )
 
-        main_layout.addWidget(title)
+
+        main_layout.addWidget(
+            title
+        )
 
 
 
         form_layout = QFormLayout()
 
+
         form_layout.setLabelAlignment(
             Qt.AlignLeft
         )
 
-        form_layout.setHorizontalSpacing(30)
+        form_layout.setHorizontalSpacing(
+            30
+        )
 
-        form_layout.setVerticalSpacing(15)
+        form_layout.setVerticalSpacing(
+            15
+        )
 
 
 
@@ -179,13 +198,11 @@ class ExpensesVariablePage(QWidget):
         )
 
 
-        main_layout.addWidget(container)
+        main_layout.addWidget(
+            container
+        )
 
 
-
-        # =====================
-        # BOTÕES
-        # =====================
 
         buttons_layout = QHBoxLayout()
 
@@ -252,8 +269,6 @@ class ExpensesVariablePage(QWidget):
             buttons_layout
         )
 
-
-
         self.table = ExpenseVariableTable()
 
 
@@ -261,22 +276,62 @@ class ExpensesVariablePage(QWidget):
             self.table
         )
 
+        self.pagination_layout = QHBoxLayout()
+
+
+        self.previous_button = QPushButton(
+            "◀ Anterior"
+        )
+
+
+        self.page_label = QLabel(
+            "Página 1 de 1"
+        )
+
+
+        self.next_button = QPushButton(
+            "Próxima ▶"
+        )
+
+
+        self.pagination_layout.addWidget(
+            self.previous_button
+        )
+
+        self.pagination_layout.addWidget(
+            self.page_label
+        )
+
+        self.pagination_layout.addWidget(
+            self.next_button
+        )
+
+
+        main_layout.addLayout(
+            self.pagination_layout
+        )
+
 
         self.setLayout(
             main_layout
         )
 
+
+
         self.save_button.clicked.connect(
             self._save_expense
         )
+
 
         self.edit_button.clicked.connect(
             self._edit_expense
         )
 
+
         self.delete_button.clicked.connect(
             self._delete_expense
         )
+
 
         self.clear_button.clicked.connect(
             self._clear_form
@@ -288,8 +343,86 @@ class ExpensesVariablePage(QWidget):
         )
 
 
+        self.previous_button.clicked.connect(
+            self._previous_page
+        )
+
+
+        self.next_button.clicked.connect(
+            self._next_page
+        )
+
+
+
+        self._load_page()
+
+
+
+    def _load_page(self):
+
+
+        self.all_expenses = [
+
+            t for t in self.finance.transactions
+
+            if t.transaction_type == "Despesa"
+
+        ]
+
+
+
+        total_pages = max(
+            1,
+            ceil(
+                len(self.all_expenses)
+                /
+                self.items_per_page
+            )
+        )
+
+
+
+        if self.current_page > total_pages:
+
+            self.current_page = total_pages
+
+
+
+        start = (
+
+            self.current_page - 1
+
+        ) * self.items_per_page
+
+
+
+        end = start + self.items_per_page
+
+
+
+        page_items = self.all_expenses[start:end]
+
+
+
         self.table.load_expenses(
-            self.finance.transactions
+            page_items
+        )
+
+
+
+        self.page_label.setText(
+            f"Página {self.current_page} de {total_pages}"
+        )
+
+
+
+        self.previous_button.setEnabled(
+            self.current_page > 1
+        )
+
+
+        self.next_button.setEnabled(
+            self.current_page < total_pages
         )
 
 
@@ -367,39 +500,39 @@ class ExpensesVariablePage(QWidget):
 
 
 
-        self.table.load_expenses(
-            self.finance.transactions
-        )
-
-
         self.expense_created.emit()
 
 
         self._clear_form()
 
 
+        self._load_page()
 
 
-    def _select_expense(self, row, column):
 
 
-        expenses = [
-
-            t for t in self.finance.transactions
-
-            if t.transaction_type == "Despesa"
-
-        ]
+    def _select_expense(self,row,column):
 
 
-        if row < len(expenses):
+        index = (
 
-            self.selected_expense = expenses[row]
+            (self.current_page - 1)
+
+            *
+
+            self.items_per_page
+
+            +
+
+            row
+
+        )
 
 
-            self.edit_button.setEnabled(True)
+        if index < len(self.all_expenses):
 
-            self.delete_button.setEnabled(True)
+
+            self.selected_expense = self.all_expenses[index]
 
 
 
@@ -413,7 +546,7 @@ class ExpensesVariablePage(QWidget):
             QMessageBox.warning(
                 self,
                 "Atenção",
-                "Selecione uma despesa."
+                "Selecione uma despesa para editar."
             )
 
             return
@@ -450,16 +583,21 @@ class ExpensesVariablePage(QWidget):
         )
 
 
+        self.editing_mode = True
+
+
+
 
     def _delete_expense(self):
 
 
         if not self.selected_expense:
 
+
             QMessageBox.warning(
                 self,
                 "Atenção",
-                "Selecione uma despesa."
+                "Selecione uma despesa para excluir."
             )
 
             return
@@ -467,11 +605,18 @@ class ExpensesVariablePage(QWidget):
 
 
         confirm = QMessageBox.question(
+
             self,
             "Excluir",
+
             "Deseja excluir essa despesa?",
-            QMessageBox.Yes | QMessageBox.No
+
+            QMessageBox.Yes |
+
+            QMessageBox.No
+
         )
+
 
 
         if confirm == QMessageBox.Yes:
@@ -482,15 +627,13 @@ class ExpensesVariablePage(QWidget):
             )
 
 
-            self.table.load_expenses(
-                self.finance.transactions
-            )
-
-
             self.expense_created.emit()
 
 
             self._clear_form()
+
+
+            self._load_page()
 
 
 
@@ -500,17 +643,24 @@ class ExpensesVariablePage(QWidget):
 
         self.description_input.clear()
 
+
         self.value_input.clear()
+
 
         self.category_combo.setCurrentIndex(0)
 
+
         self.payment_combo.setCurrentIndex(0)
+
 
         self.status_combo.setCurrentIndex(0)
 
 
 
         self.selected_expense = None
+
+
+        self.editing_mode = False
 
 
         self.table.clearSelection()
@@ -522,10 +672,12 @@ class ExpensesVariablePage(QWidget):
 
 
 
+
     def _validate_form(self):
 
 
         if not self.description_input.text().strip():
+
 
             QMessageBox.warning(
                 self,
@@ -559,6 +711,7 @@ class ExpensesVariablePage(QWidget):
 
         if value <= 0:
 
+
             QMessageBox.warning(
                 self,
                 "Atenção",
@@ -570,4 +723,21 @@ class ExpensesVariablePage(QWidget):
 
 
         return True
-    
+
+
+
+
+    def _next_page(self):
+
+        self.current_page += 1
+
+        self._load_page()
+
+
+
+
+    def _previous_page(self):
+
+        self.current_page -= 1
+
+        self._load_page()

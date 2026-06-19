@@ -10,6 +10,8 @@ from PySide6.QtWidgets import (
     QMessageBox
 )
 
+from math import ceil
+
 from PySide6.QtCore import Signal, Qt
 from datetime import date
 
@@ -25,6 +27,12 @@ class IncomePage(QWidget):
     def __init__(self, finance_service):
 
         super().__init__()
+
+        self.current_page = 1
+
+        self.items_per_page = 6
+
+        self.all_incomes = []
 
         self.finance = finance_service
 
@@ -179,7 +187,6 @@ class IncomePage(QWidget):
             "editButton"
         )
 
-
         self.delete_button = QPushButton(
             "Excluir"
         )
@@ -220,7 +227,23 @@ class IncomePage(QWidget):
             buttons_layout
         )
 
+        # ==========================
+        # PESQUISA
+        # ==========================
 
+        self.search_input = QLineEdit()
+
+        self.search_input.setPlaceholderText(
+            "Pesquisar renda..."
+        )
+
+        self.search_input.setObjectName(
+            "modernLineEdit"
+        )
+
+        main_layout.addWidget(
+            self.search_input
+        )
 
         self.table = IncomeTable()
 
@@ -229,11 +252,38 @@ class IncomePage(QWidget):
             self.table
         )
 
+        self.pagination_layout = QHBoxLayout()
 
-        self.table.load_income(
-            self.finance.transactions
+        self.previous_button = QPushButton(
+            "◀ Anterior"
         )
 
+        self.page_label = QLabel(
+            "Página 1 de 1"
+        )
+
+        self.next_button = QPushButton(
+            "Próxima ▶"
+        )
+
+        self.pagination_layout.addWidget(
+            self.previous_button
+        )
+
+        self.pagination_layout.addWidget(
+            self.page_label
+        )
+
+        self.pagination_layout.addWidget(
+            self.next_button
+        )
+
+        main_layout.addLayout(
+            self.pagination_layout
+        )
+
+
+        self._load_page()
 
         self.setLayout(
             main_layout
@@ -260,11 +310,17 @@ class IncomePage(QWidget):
             self._clear_form
         )
 
-
-        self.table.cellDoubleClicked.connect(
-            self._select_income
+        self.search_input.textChanged.connect(
+            self._filter_incomes
         )
 
+        self.previous_button.clicked.connect(
+            self._previous_page
+        )
+
+        self.next_button.clicked.connect(
+            self._next_page
+        )
 
 
     def _save_income(self):
@@ -356,9 +412,7 @@ class IncomePage(QWidget):
         self.editing_mode = False
 
 
-
-    def _select_income(self,row,column):
-
+    def _select_income(self, row, column):
 
         incomes = [
 
@@ -368,33 +422,16 @@ class IncomePage(QWidget):
 
         ]
 
+        if row < len(incomes):
 
-        self.selected_income = incomes[row]
-
-
-        self.income_type_combo.setCurrentText(
-            self.selected_income.description
-        )
-
-
-        self.value_input.setText(
-            str(self.selected_income.value)
-        )
-
-
-        self.payment_combo.setCurrentText(
-            self.selected_income.payment_method
-        )
-
+            self.selected_income = incomes[row]
 
 
     def _edit_income(self):
 
         selected = self.table.selectedItems()
 
-
         if not selected:
-
 
             QMessageBox.warning(
                 self,
@@ -402,44 +439,9 @@ class IncomePage(QWidget):
                 "Selecione uma renda para editar."
             )
 
-
             return
 
-
-
         row = self.table.currentRow()
-
-
-        self._select_income(row,0)
-
-
-
-        self.income_type_combo.setCurrentText(
-            self.selected_income.description
-        )
-
-
-        self.value_input.setText(
-            str(self.selected_income.value)
-        )
-
-
-        self.payment_combo.setCurrentText(
-            self.selected_income.payment_method
-        )
-
-
-
-        self.save_button.setText(
-            "Atualizar"
-        )
-
-
-        self.editing_mode = True
-
-
-
-    def _select_income(self,row,column):
 
         incomes = [
 
@@ -449,10 +451,25 @@ class IncomePage(QWidget):
 
         ]
 
+        self.selected_income = incomes[row]
 
-        if row < len(incomes):
+        self.income_type_combo.setCurrentText(
+            self.selected_income.description
+        )
 
-            self.selected_income = incomes[row]
+        self.value_input.setText(
+            str(self.selected_income.value)
+        )
+
+        self.payment_combo.setCurrentText(
+            self.selected_income.payment_method
+        )
+
+        self.save_button.setText(
+            "Atualizar"
+        )
+
+        self.editing_mode = True
 
 
     def _delete_income(self):
@@ -609,3 +626,98 @@ class IncomePage(QWidget):
 
         return True
     
+    
+    def _filter_incomes(self):
+
+        text = self.search_input.text().lower()
+
+        incomes = [
+
+            t for t in self.finance.transactions
+
+            if t.transaction_type == "Renda"
+
+            and (
+                text in t.description.lower()
+                or text in t.payment_method.lower()
+            )
+        ]
+
+        self.table.load_income(
+            incomes
+        )
+
+
+    def _load_page(self):
+
+        self.all_incomes = [
+
+            t for t in self.finance.transactions
+
+            if t.transaction_type == "Renda"
+
+        ]
+
+
+        total_pages = max(
+            1,
+            ceil(
+                len(self.all_incomes) /
+                self.items_per_page
+            )
+        )
+
+
+        if self.current_page > total_pages:
+
+            self.current_page = total_pages
+
+
+
+        start = (
+            self.current_page - 1
+        ) * self.items_per_page
+
+
+        end = start + self.items_per_page
+
+
+
+        page_items = self.all_incomes[start:end]
+
+
+
+        self.table.load_income(
+            page_items
+        )
+
+
+
+        self.page_label.setText(
+            f"Página {self.current_page} de {total_pages}"
+        )
+
+
+
+        self.previous_button.setEnabled(
+            self.current_page > 1
+        )
+
+
+        self.next_button.setEnabled(
+            self.current_page < total_pages
+        )
+
+
+    def _next_page(self):
+
+        self.current_page += 1
+
+        self._load_page()
+
+
+    def _previous_page(self):
+
+        self.current_page -= 1
+
+        self._load_page()

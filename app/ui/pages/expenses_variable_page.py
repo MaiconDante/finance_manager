@@ -809,7 +809,7 @@ class ExpensesVariablePage(QWidget):
 
             t for t in self.finance.transactions
 
-            if t.transaction_type == "Despesa"
+            if t.transaction_type in ["Despesa", "Despesa Fixa"]
 
             and (
 

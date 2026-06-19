@@ -19,7 +19,7 @@ from datetime import date
 
 from app.models.transaction import Transaction
 
-from app.ui.widgets.expense_variable_table import ExpenseVariableTable
+from app.ui.widgets.expense_fixed_table import ExpenseFixedTable
 
 
 
@@ -363,7 +363,7 @@ class ExpensesFixedPage(QWidget):
         # =====================
 
 
-        self.table = ExpenseVariableTable()
+        self.table = ExpenseFixedTable()
 
 
         main_layout.addWidget(
@@ -516,6 +516,11 @@ class ExpensesFixedPage(QWidget):
                 self.selected_expense
             )
 
+            QMessageBox.information(
+                self,
+                "Sucesso",
+                "Despesa fixa atualizada com sucesso."
+            )
 
 
         else:
@@ -548,14 +553,19 @@ class ExpensesFixedPage(QWidget):
 
 
 
-        self._load_page()
+        self.all_expenses = []
 
+        self._load_page()
 
         self.expense_created.emit()
 
+        QMessageBox.information(
+            self,
+            "Sucesso",
+            "Despesa fixa cadastrada com sucesso."
+        )
 
         self._clear_form()
-
 
 
 
@@ -746,11 +756,17 @@ class ExpensesFixedPage(QWidget):
             )
 
 
-            self.expense_created.emit()
+            self.all_expenses = []
 
+            self.expense_created.emit()
 
             self._load_page()
 
+            QMessageBox.information(
+                self,
+                "Sucesso",
+                "Despesa fixa excluída com sucesso."
+            )
 
             self._clear_form()
 
@@ -799,8 +815,7 @@ class ExpensesFixedPage(QWidget):
     def _load_page(self):
 
 
-        if not self.search_input.text():
-
+        if not self.search_input.text().strip():
 
             self.all_expenses = [
 
@@ -811,45 +826,25 @@ class ExpensesFixedPage(QWidget):
             ]
 
 
-
         total_pages = max(
-
             1,
-
             ceil(
-
                 len(self.all_expenses)
-
                 /
-
                 self.items_per_page
-
             )
-
         )
 
 
-
-        if self.current_page > total_pages:
-
-            self.current_page = total_pages
-
-
-
         start = (
-
             self.current_page - 1
-
         ) * self.items_per_page
-
 
 
         end = start + self.items_per_page
 
 
-
         page_items = self.all_expenses[start:end]
-
 
 
         self.table.load_expenses(
@@ -857,21 +852,9 @@ class ExpensesFixedPage(QWidget):
         )
 
 
-
         self.page_label.setText(
             f"Página {self.current_page} de {total_pages}"
         )
-
-
-        self.previous_button.setEnabled(
-            self.current_page > 1
-        )
-
-
-        self.next_button.setEnabled(
-            self.current_page < total_pages
-        )
-
 
 
 
@@ -895,8 +878,6 @@ class ExpensesFixedPage(QWidget):
 
 
         self._load_page()
-
-
 
 
 
@@ -993,3 +974,4 @@ class ExpensesFixedPage(QWidget):
 
 
         return True
+    

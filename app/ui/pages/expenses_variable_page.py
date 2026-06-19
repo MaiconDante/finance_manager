@@ -309,7 +309,7 @@ class ExpensesVariablePage(QWidget):
         self.search_input = QLineEdit()
 
         self.search_input.setPlaceholderText(
-            "Pesquisar despesa..."
+            "Pesquisar despesa variável..."
         )
 
         self.search_input.setObjectName(

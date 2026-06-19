@@ -36,6 +36,8 @@ class ExpenseFixedTable(QTableWidget):
             QHeaderView.Stretch
         )
 
+        self.horizontalHeader().setFixedHeight(50)
+
 
         self.verticalHeader().setVisible(False)
 

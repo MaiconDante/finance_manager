@@ -419,17 +419,13 @@ class ExpensesVariablePage(QWidget):
     def _load_page(self):
 
 
-        if not self.all_expenses:
+        self.all_expenses = [
 
+            t for t in self.finance.transactions
 
-            self.all_expenses = [
+            if t.transaction_type == "Despesa"
 
-                t for t in self.finance.transactions
-
-                if t.transaction_type == "Despesa"
-
-            ]
-
+        ]
 
 
         total_pages = max(
@@ -473,9 +469,7 @@ class ExpensesVariablePage(QWidget):
 
 
         self.table.load_expenses(
-
             page_items
-
         )
 
 
@@ -485,7 +479,6 @@ class ExpensesVariablePage(QWidget):
             f"Página {self.current_page} de {total_pages}"
 
         )
-
 
 
         self.previous_button.setEnabled(
@@ -583,6 +576,9 @@ class ExpensesVariablePage(QWidget):
 
         self._load_page()
 
+        self.expense_created.emit()
+
+        self._clear_form()
 
 
 
@@ -705,10 +701,9 @@ class ExpensesVariablePage(QWidget):
             self.expense_created.emit()
 
 
-            self._clear_form()
-
-
             self._load_page()
+
+            self._clear_form()
 
 
 

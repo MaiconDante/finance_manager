@@ -415,17 +415,17 @@ class ExpensesVariablePage(QWidget):
         self._load_page()
 
 
-
     def _load_page(self):
 
+        if not self.search_input.text().strip():
 
-        self.all_expenses = [
+            self.all_expenses = [
 
-            t for t in self.finance.transactions
+                t for t in self.finance.transactions
 
-            if t.transaction_type == "Despesa"
+                if t.transaction_type == "Despesa"
 
-        ]
+            ]
 
 
         total_pages = max(
@@ -445,11 +445,9 @@ class ExpensesVariablePage(QWidget):
         )
 
 
-
         if self.current_page > total_pages:
 
             self.current_page = total_pages
-
 
 
         start = (
@@ -459,19 +457,15 @@ class ExpensesVariablePage(QWidget):
         ) * self.items_per_page
 
 
-
         end = start + self.items_per_page
-
 
 
         page_items = self.all_expenses[start:end]
 
 
-
         self.table.load_expenses(
             page_items
         )
-
 
 
         self.page_label.setText(
@@ -565,14 +559,6 @@ class ExpensesVariablePage(QWidget):
             self.finance.add_transaction(
                 expense
             )
-
-
-
-        self.expense_created.emit()
-
-
-        self._clear_form()
-
 
         self._load_page()
 
@@ -816,9 +802,7 @@ class ExpensesVariablePage(QWidget):
 
     def _filter_expenses(self):
 
-
-        text = self.search_input.text().lower()
-
+        text = self.search_input.text().lower().strip()
 
 
         self.all_expenses = [
@@ -842,7 +826,6 @@ class ExpensesVariablePage(QWidget):
             )
 
         ]
-
 
 
         self.current_page = 1

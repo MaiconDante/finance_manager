@@ -269,6 +269,24 @@ class ExpensesVariablePage(QWidget):
             buttons_layout
         )
 
+        self.search_input = QLineEdit()
+
+        self.search_input.setPlaceholderText(
+            "Pesquisar despesa..."
+        )
+
+        self.search_input.setObjectName(
+            "modernLineEdit"
+        )
+
+        self.search_input.setMinimumWidth(
+            350
+        )
+
+        main_layout.addWidget(
+            self.search_input
+        )
+
         self.table = ExpenseVariableTable()
 
 
@@ -352,6 +370,9 @@ class ExpensesVariablePage(QWidget):
             self._next_page
         )
 
+        self.search_input.textChanged.connect(
+            self._filter_expenses
+        )
 
 
         self._load_page()
@@ -361,23 +382,33 @@ class ExpensesVariablePage(QWidget):
     def _load_page(self):
 
 
-        self.all_expenses = [
+        if not self.all_expenses:
 
-            t for t in self.finance.transactions
 
-            if t.transaction_type == "Despesa"
+            self.all_expenses = [
 
-        ]
+                t for t in self.finance.transactions
+
+                if t.transaction_type == "Despesa"
+
+            ]
 
 
 
         total_pages = max(
+
             1,
+
             ceil(
+
                 len(self.all_expenses)
+
                 /
+
                 self.items_per_page
+
             )
+
         )
 
 
@@ -405,26 +436,33 @@ class ExpensesVariablePage(QWidget):
 
 
         self.table.load_expenses(
+
             page_items
+
         )
 
 
 
         self.page_label.setText(
+
             f"Página {self.current_page} de {total_pages}"
+
         )
 
 
 
         self.previous_button.setEnabled(
+
             self.current_page > 1
+
         )
 
 
         self.next_button.setEnabled(
-            self.current_page < total_pages
-        )
 
+            self.current_page < total_pages
+
+        )
 
 
     def _save_expense(self):
@@ -739,5 +777,43 @@ class ExpensesVariablePage(QWidget):
     def _previous_page(self):
 
         self.current_page -= 1
+
+        self._load_page()
+
+
+
+    def _filter_expenses(self):
+
+
+        text = self.search_input.text().lower()
+
+
+
+        self.all_expenses = [
+
+            t for t in self.finance.transactions
+
+            if t.transaction_type == "Despesa"
+
+            and (
+
+                text in t.description.lower()
+
+                or text in t.category.lower()
+
+                or text in t.status.lower()
+
+                or text in t.payment_method.lower()
+
+                or text in str(t.date).lower()
+
+            )
+
+        ]
+
+
+
+        self.current_page = 1
+
 
         self._load_page()

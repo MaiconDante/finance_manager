@@ -552,9 +552,6 @@ class ExpensesFixedPage(QWidget):
             )
 
 
-
-        self.all_expenses = []
-
         self._load_page()
 
         self.expense_created.emit()
@@ -569,138 +566,51 @@ class ExpensesFixedPage(QWidget):
 
 
 
-    def _get_selected_expense(self):
-
-
-        row = self.table.currentRow()
-
-
-
-        if row < 0:
-
-            return None
-
-
+    def _select_expense(self, row, column):
 
         index = (
-
             (self.current_page - 1)
-
-            *
-
-            self.items_per_page
-
-            +
-
-            row
-
+            * self.items_per_page
+            + row
         )
-
-
 
         if index < len(self.all_expenses):
 
-            return self.all_expenses[index]
-
-
-
-        return None
-
-
-
-
-
-    def _select_expense(self,row,column):
-
-
-        expense = self._get_selected_expense()
-
-
-
-        if expense:
-
-
-            self.selected_expense = expense
-
-
-
-            self.description_input.setText(
-                expense.description
-            )
-
-
-            self.value_input.setText(
-                str(expense.value)
-            )
-
-
-            self.category_combo.setCurrentText(
-                expense.category
-            )
-
-
-            self.payment_combo.setCurrentText(
-                expense.payment_method
-            )
-
-
-            self.status_combo.setCurrentText(
-                expense.status
-            )
-
-
+            self.selected_expense = self.all_expenses[index]
 
 
 
     def _edit_expense(self):
 
-
-        expense = self._get_selected_expense()
-
-
-
-        if not expense:
-
+        if not self.selected_expense:
 
             QMessageBox.warning(
                 self,
                 "Atenção",
-                "Selecione uma despesa."
+                "Selecione uma despesa para editar."
             )
-
 
             return
 
-
-
-        self.selected_expense = expense
-
-
-
         self.description_input.setText(
-            expense.description
+            self.selected_expense.description
         )
-
 
         self.value_input.setText(
-            str(expense.value)
+            str(self.selected_expense.value)
         )
-
 
         self.category_combo.setCurrentText(
-            expense.category
+            self.selected_expense.category
         )
-
 
         self.payment_combo.setCurrentText(
-            expense.payment_method
+            self.selected_expense.payment_method
         )
-
 
         self.status_combo.setCurrentText(
-            expense.status
+            self.selected_expense.status
         )
-
 
         self.save_button.setText(
             "Atualizar"
@@ -708,70 +618,36 @@ class ExpensesFixedPage(QWidget):
 
 
 
-
-
     def _delete_expense(self):
 
-
-        expense = self._get_selected_expense()
-
-
-
-        if not expense:
-
+        if not self.selected_expense:
 
             QMessageBox.warning(
                 self,
                 "Atenção",
-                "Selecione uma despesa."
+                "Selecione uma despesa para excluir."
             )
-
 
             return
 
-
-
         confirm = QMessageBox.question(
-
             self,
-
             "Excluir",
-
-            "Deseja excluir esta despesa?",
-
-            QMessageBox.Yes |
-
-            QMessageBox.No
-
+            "Deseja excluir essa despesa?",
+            QMessageBox.Yes | QMessageBox.No
         )
-
-
 
         if confirm == QMessageBox.Yes:
 
-
-
             self.finance.delete_transaction(
-                expense
+                self.selected_expense
             )
-
-
-            self.all_expenses = []
 
             self.expense_created.emit()
 
             self._load_page()
 
-            QMessageBox.information(
-                self,
-                "Sucesso",
-                "Despesa fixa excluída com sucesso."
-            )
-
             self._clear_form()
-
-
-
 
 
     def _filter_expenses(self):
@@ -835,6 +711,10 @@ class ExpensesFixedPage(QWidget):
             )
         )
 
+        if self.current_page > total_pages:
+
+            self.current_page = total_pages
+
 
         start = (
             self.current_page - 1
@@ -856,7 +736,17 @@ class ExpensesFixedPage(QWidget):
             f"Página {self.current_page} de {total_pages}"
         )
 
+        self.previous_button.setEnabled(
 
+        self.current_page > 1
+
+    )
+
+        self.next_button.setEnabled(
+
+        self.current_page < total_pages
+
+        )
 
 
     def _next_page(self):
@@ -908,11 +798,9 @@ class ExpensesFixedPage(QWidget):
 
         self.selected_expense = None
 
-
+        self.editing_mode = False
 
         self.table.clearSelection()
-
-
 
         self.save_button.setText(
             "Salvar"

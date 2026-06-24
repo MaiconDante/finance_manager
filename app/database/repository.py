@@ -19,6 +19,18 @@ def create_table():
                     )
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS finance_settings (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            setting_type TEXT,
+
+            name TEXT
+
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -137,3 +149,94 @@ def delete_transaction(transaction):
 
     conn.close()
     
+def insert_setting(setting_type, name):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+
+    cursor.execute(
+        """
+        INSERT INTO finance_settings
+        (
+            setting_type,
+            name
+        )
+
+        VALUES (?, ?)
+
+        """,
+        (
+            setting_type,
+            name
+        )
+    )
+
+
+    conn.commit()
+
+    conn.close()
+
+def get_settings(setting_type):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+
+    cursor.execute(
+        """
+        SELECT name
+
+        FROM finance_settings
+
+        WHERE setting_type = ?
+
+        """,
+        (
+            setting_type,
+        )
+    )
+
+
+    rows = cursor.fetchall()
+
+
+    conn.close()
+
+
+    return [
+
+        row[0]
+
+        for row in rows
+
+    ]
+
+def delete_setting(name, setting_type):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+
+    cursor.execute(
+        """
+        DELETE FROM finance_settings
+
+        WHERE name = ?
+
+        AND setting_type = ?
+
+        """,
+        (
+            name,
+            setting_type
+        )
+    )
+
+
+    conn.commit()
+
+    conn.close()

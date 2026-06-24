@@ -4,58 +4,14 @@ from app.services.insights_engine import InsightsEngine
 class FinanceService:
 
     def __init__(self):
+
         repository.create_table()
+
         self.transactions = repository.get_all_transactions()
+
         self.insights_engine = InsightsEngine()
 
-        # Categorias
-
-        self.categories = [
-            "Moradia",
-            "Alimentação",
-            "Transporte",
-            "Lazer",
-            "Saúde",
-            "Serviços",
-            "Assinaturas",
-            "Entretenimento",
-            "Tecnologia",
-            "Jogos",
-            "Outros"
-        ]
-
-
-        # Formas de pagamento
-
-        self.payment_methods = [
-            "PIX",
-            "Cartão de Crédito",
-            "Dinheiro",
-            "Boleto",
-            "Débito",
-            "Outros"
-        ]
-
-
-        # Status
-
-        self.status_list = [
-            "Pendente",
-            "Pago",
-            "Cancelado"
-        ]
-
-
-        # Tipos de renda
-
-        self.income_types = [
-            "Salário",
-            "Freelance",
-            "Investimento",
-            "Décimo Terceiro",
-            "PIS/PASEP",
-            "Outros"
-        ]
+        self.load_settings()
 
     def add_transaction(self, transaction):
         repository.insert_transaction(transaction)
@@ -117,6 +73,11 @@ class FinanceService:
         ]:
             return False
 
+        repository.insert_setting(
+            "category",
+            category
+        )
+
         self.categories.append(category)
 
         return True
@@ -125,6 +86,11 @@ class FinanceService:
 
         if category not in self.categories:
             return False
+
+        repository.delete_setting(
+            category,
+            "category"
+        )
 
         self.categories.remove(category)
 
@@ -142,6 +108,11 @@ class FinanceService:
             for item in self.payment_methods
         ]:
             return False
+
+        repository.insert_setting(
+            "payment",
+            payment_method
+        )
 
         self.payment_methods.append(
             payment_method
@@ -162,6 +133,11 @@ class FinanceService:
         ]:
             return False
 
+        repository.insert_setting(
+            "status",
+            status
+        )
+
         self.status_list.append(
             status
         )
@@ -181,8 +157,114 @@ class FinanceService:
         ]:
             return False
 
+        repository.insert_setting(
+            "income_type",
+            income_type
+        )
+
         self.income_types.append(
             income_type
         )
 
         return True
+    
+    def load_settings(self):
+
+
+        self.categories = repository.get_settings(
+            "category"
+        )
+
+
+        self.payment_methods = repository.get_settings(
+            "payment"
+        )
+
+
+        self.status_list = repository.get_settings(
+            "status"
+        )
+
+
+        self.income_types = repository.get_settings(
+            "income_type"
+        )
+
+
+        if not self.categories:
+
+
+            default_categories = [
+
+                "Moradia",
+                "Alimentação",
+                "Transporte",
+                "Lazer",
+                "Saúde",
+                "Serviços",
+                "Assinaturas",
+                "Entretenimento",
+                "Tecnologia",
+                "Jogos",
+                "Outros"
+
+            ]
+
+
+            for item in default_categories:
+
+                self.add_category(item)
+
+
+
+        if not self.payment_methods:
+
+
+            default_payments = [
+
+                "PIX",
+                "Cartão de Crédito",
+                "Dinheiro",
+                "Boleto",
+                "Débito",
+                "Outros"
+
+            ]
+
+
+            for item in default_payments:
+
+                self.add_payment_method(item)
+
+
+
+        if not self.status_list:
+
+
+            for item in [
+
+                "Pendente",
+                "Pago",
+                "Cancelado"
+
+            ]:
+
+                self.add_status(item)
+
+
+
+        if not self.income_types:
+
+
+            for item in [
+
+                "Salário",
+                "Freelance",
+                "Investimento",
+                "Décimo Terceiro",
+                "PIS/PASEP",
+                "Outros"
+
+            ]:
+
+                self.add_income_type(item)
